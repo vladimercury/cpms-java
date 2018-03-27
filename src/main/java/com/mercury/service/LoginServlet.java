@@ -5,6 +5,7 @@ import com.mercury.dao.impl.UserDaoImpl;
 import com.mercury.dto.UserDTO;
 import com.mercury.exception.DataAccessException;
 import com.mercury.model.User;
+import com.mercury.util.SessionWrapper;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
@@ -15,20 +16,16 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class LoginServlet extends HttpServlet {
     private static UserDaoImpl userDao = new UserDaoImpl();
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        request.setCharacterEncoding("UTF-8");
+        SessionWrapper sessionWrapper = new SessionWrapper(request.getSession(false));
 
         String login = request.getParameter("login");
         String password = request.getParameter("password");
@@ -38,6 +35,7 @@ public class LoginServlet extends HttpServlet {
                 User user = userDao.authenticate(login, password);
                 Map<String, Object> responseMap = new HashMap<>();
                 if (user != null) {
+                    sessionWrapper.setLoggedUserId(user.getId());
                     responseMap.put("success", true);
                     responseMap.put("user", new UserDTO(user));
                 } else {
