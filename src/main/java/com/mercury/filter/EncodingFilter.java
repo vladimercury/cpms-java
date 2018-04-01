@@ -1,7 +1,6 @@
 package com.mercury.filter;
 
 import com.mercury.util.SessionWrapper;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +22,7 @@ public class EncodingFilter implements Filter {
 
         servletRequest.setCharacterEncoding(UTF8);
         servletResponse.setCharacterEncoding(UTF8);
+        servletResponse.setContentType("application/json");
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         SessionWrapper sessionWrapper = new SessionWrapper(httpServletRequest.getSession(false));

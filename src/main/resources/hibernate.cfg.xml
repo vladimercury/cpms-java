@@ -24,6 +24,11 @@
         <mapping class="com.mercury.model.EmployeePosition"/>
         <mapping class="com.mercury.model.EmployeeInfo"/>
         <mapping class="com.mercury.model.User"/>
+        <mapping class="com.mercury.model.Message"/>
+        <mapping class="com.mercury.model.ProjectType"/>
+        <mapping class="com.mercury.model.ProjectStageTemplate"/>
+        <mapping class="com.mercury.model.Project"/>
+        <mapping class="com.mercury.model.ProjectStage"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        SessionWrapper sessionWrapper = new SessionWrapper(request.getSession(false));
+        SessionWrapper sessionWrapper = new SessionWrapper(request.getSession());
 
         String login = request.getParameter("login");
         String password = request.getParameter("password");
@@ -35,15 +35,16 @@ public class LoginServlet extends HttpServlet {
                 User user = userDao.authenticate(login, password);
                 Map<String, Object> responseMap = new HashMap<>();
                 if (user != null) {
+                    UserDTO userDTO = new UserDTO(user);
+                    userDTO.setOwnUser(true);
                     sessionWrapper.setLoggedUserId(user.getId());
                     responseMap.put("success", true);
-                    responseMap.put("user", new UserDTO(user));
+                    responseMap.put("user", userDTO);
                 } else {
                     responseMap.put("success", false);
                 }
                 response.getWriter().write(new Gson().toJson(responseMap));
             } catch (DataAccessException | InvalidKeySpecException | NoSuchAlgorithmException e) {
-                response.getWriter().write(e.getMessage());
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {

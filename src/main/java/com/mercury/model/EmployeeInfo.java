@@ -22,7 +22,7 @@ public class EmployeeInfo implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "Id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "Id", nullable = false)
     public int getId() {
         return id;
     }
@@ -32,7 +32,7 @@ public class EmployeeInfo implements Serializable {
     }
 
     @Basic
-    @Column(name = "Description", nullable = true, insertable = true, updatable = true)
+    @Column(name = "Description")
     @Type(type = "text")
     public String getDescription() {
         return description;

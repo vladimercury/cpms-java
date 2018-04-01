@@ -8,15 +8,20 @@
 </head>
 <body>
 <div class="container">
+    <h3>Login</h3>
     <form>
         <label for="loginInput">Login</label>
         <input type="text" id="loginInput"/>
         <label for="passwordInput">Password</label>
         <input type="password" id="passwordInput"/>
     </form>
-    <button id="loginButton">Submit</button>
+    <button id="loginButton">Login</button>
+    <button id="logoutButton">Logout</button>
+</div>
+<div class="container">
+    <button id="receivedMessagesButton">Received Messages</button>
 </div>
 </body>
 <script src="js/jquery.min.js"></script>
-<script src="js/main.js"></script>
+<script src="js/test.js"></script>
 </html>

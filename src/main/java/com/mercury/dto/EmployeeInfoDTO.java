@@ -1,6 +1,8 @@
 package com.mercury.dto;
 
 import com.mercury.model.EmployeeInfo;
+import com.mercury.model.EmployeePosition;
+import org.hibernate.Hibernate;
 
 public class EmployeeInfoDTO {
     private int id;
@@ -21,8 +23,9 @@ public class EmployeeInfoDTO {
         if (entity != null) {
             this.id = entity.getId();
             this.description = entity.getDescription();
-            if (entity.getPosition() != null) {
-                this.position = new EmployeePositionDTO(entity.getPosition());
+            EmployeePosition position = entity.getPosition();
+            if (position != null && Hibernate.isInitialized(position)) {
+                this.position = new EmployeePositionDTO(position);
             }
         }
     }

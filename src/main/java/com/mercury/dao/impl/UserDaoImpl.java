@@ -5,8 +5,9 @@ import com.mercury.dao.UserDAO;
 import com.mercury.dao.util.HibernateUtil;
 import com.mercury.dao.util.PasswordHash;
 import com.mercury.exception.DataAccessException;
-import com.mercury.model.EmployeeInfo;
 import com.mercury.model.User;
+import com.mercury.model.expand.UserExpansion;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
@@ -17,6 +18,17 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class UserDaoImpl implements UserDAO {
     private static final LoggerWrapper LOG = LoggerWrapper.getLogger(UserDaoImpl.class);
+
+    private void doExpand(User user, UserExpansion expansion) throws DataAccessException {
+        switch (expansion) {
+            case RECEIVED_MESSAGES:
+                Hibernate.initialize(user.getReceivedMessages());
+                break;
+            case EMPLOYEE_INFO:
+                Hibernate.initialize(user.getInfo());
+                break;
+        }
+    }
 
     @Override
     public User authenticate(String login, String password) throws DataAccessException,
@@ -37,6 +49,29 @@ public class UserDaoImpl implements UserDAO {
                     .createCriteria(User.class)
                     .add(Restrictions.eq("login", login))
                     .uniqueResult();
+            HibernateUtil.commit();
+        } catch (HibernateException e) {
+            LOG.error(e);
+            HibernateUtil.rollback();
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            HibernateUtil.closeSession();
+        }
+        return user;
+    }
+
+    @Override
+    public User getAndExpand(int userId, UserExpansion... expand) throws DataAccessException {
+        User user;
+        try {
+            HibernateUtil.beginTransaction();
+            user = (User) HibernateUtil.getSession()
+                    .createCriteria(User.class)
+                    .add(Restrictions.eq("id", userId))
+                    .uniqueResult();
+            for (UserExpansion expansion : expand) {
+                doExpand(user, expansion);
+            }
             HibernateUtil.commit();
         } catch (HibernateException e) {
             LOG.error(e);

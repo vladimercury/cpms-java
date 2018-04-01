@@ -1,10 +1,14 @@
 package com.mercury.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "User", schema = "", catalog = "dream_team_cpms")
@@ -16,11 +20,13 @@ public class User implements Serializable {
     private String lastName;
     private String middleName;
     private boolean isAdmin;
+
     private EmployeeInfo info;
+    private Set<Message> receivedMessages = new HashSet<>(0);
 
     @Id
     @GeneratedValue
-    @Column(name = "Id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "Id", nullable = false, insertable = true, updatable = false)
     public int getId() {
         return id;
     }
@@ -30,7 +36,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "Login", nullable = false, insertable = true, updatable = true, unique = true, length = 255)
+    @Column(name = "Login", nullable = false, unique = true, length = 255)
     public String getLogin() {
         return login;
     }
@@ -40,7 +46,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "Password", nullable = false, insertable = true, updatable = true, length = 255)
+    @Column(name = "Password", nullable = false, length = 255)
     public String getPassword() {
         return password;
     }
@@ -50,7 +56,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "FirstName", nullable = false, insertable = true, updatable = true, length = 32)
+    @Column(name = "FirstName", nullable = false, length = 32)
     public String getFirstName() {
         return firstName;
     }
@@ -60,7 +66,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "LastName", nullable = false, insertable = true, updatable = true, length = 32)
+    @Column(name = "LastName", nullable = false, length = 32)
     public String getLastName() {
         return lastName;
     }
@@ -70,7 +76,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "MiddleName", nullable = true, insertable = true, updatable = true, length = 32)
+    @Column(name = "MiddleName", length = 32)
     public String getMiddleName() {
         return middleName;
     }
@@ -80,7 +86,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "IsAdmin", nullable = false, insertable = true, updatable = true, columnDefinition = "int")
+    @Column(name = "IsAdmin", nullable = false, columnDefinition = "int")
     @Type(type = "org.hibernate.type.NumericBooleanType")
     public boolean isAdmin() {
         return isAdmin;
@@ -90,7 +96,7 @@ public class User implements Serializable {
         isAdmin = admin;
     }
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EmployeeInfoId")
     public EmployeeInfo getInfo() {
         return info;
@@ -100,6 +106,14 @@ public class User implements Serializable {
         this.info = info;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "target", cascade = CascadeType.ALL)
+    public Set<Message> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+    public void setReceivedMessages(Set<Message> receivedMessages) {
+        this.receivedMessages = receivedMessages;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -136,4 +150,5 @@ public class User implements Serializable {
 
         return 31 * result;
     }
+
 }

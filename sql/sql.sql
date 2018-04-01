@@ -59,22 +59,13 @@ CREATE TABLE Message
     Id                  INT NOT NULL AUTO_INCREMENT,
     Content             TEXT NOT NULL,
     CreationDate        DATETIME DEFAULT current_timestamp,
+    Unread              BOOLEAN NOT NULL DEFAULT FALSE,
     AuthorId            INT NOT NULL,
     TargetUserId        INT NOT NULL,
 
     PRIMARY KEY (Id),
     FOREIGN KEY (AuthorId) REFERENCES User (Id),
     FOREIGN KEY (TargetUserId) REFERENCES User (Id)
-);
-
-CREATE TABLE UnreadMessage
-(
-    UserId              INT NOT NULL,
-    MessageId           INT NOT NULL,
-
-    PRIMARY KEY (UserId, MessageId),
-    FOREIGN KEY (UserId) REFERENCES User (Id),
-    FOREIGN KEY (MessageId) REFERENCES Message (Id)
 );
 
 CREATE TABLE ProjectType
@@ -106,7 +97,6 @@ CREATE TABLE Project
     Active              BOOLEAN NOT NULL DEFAULT FALSE,
     Priority            INT,
     ProjectTypeId       INT NOT NULL,
-    CurrentStageId      INT NOT NULL,
 
     PRIMARY KEY (Id),
     FOREIGN KEY (ProjectTypeId) REFERENCES ProjectType (Id)
@@ -125,10 +115,6 @@ CREATE TABLE ProjectStage
     FOREIGN KEY (ProjectId) REFERENCES Project (Id),
     FOREIGN KEY (TemplateId) REFERENCES ProjectStageTemplate (Id)
 );
-
-ALTER TABLE Project
-ADD FOREIGN KEY (CurrentStageId)
-REFERENCES ProjectStage (Id);
 
 CREATE TABLE Deployment
 (
@@ -206,8 +192,6 @@ CREATE TABLE ProjectLog
     FOREIGN KEY (DeploymentId) REFERENCES Deployment(Id)
 );
 
-# Password constants for bcrypt hash
-
 SET @dreamteam = '947:5b424061353236346632:67115f74e0c30d154a5cc9625d628679e8a6835a95e2701305a787c36f59e5b2b0a52c1c0d19e5a49ea5e7c33b816c8ec208d9a30fc9d33b7b602b24e8db53bc';
 
 INSERT INTO EmployeePosition (Name)
@@ -224,6 +208,16 @@ INSERT INTO User (Login, Password, FirstName, LastName, IsAdmin, EmployeeInfoId)
     VALUES ('admin', @dreamteam, "Ivan", "Ivanov", TRUE, @SysAdminInfo);
 
 SET @SysAdmin = LAST_INSERT_ID();
+
+INSERT INTO EmployeeInfo (Description)
+    VALUES ('Test User');
+
+SET @TestUserInfo = LAST_INSERT_ID();
+
+INSERT INTO User (Login, Password, FirstName, LastName, IsAdmin, EmployeeInfoId)
+    VALUES ('test', @dreamteam, "Petr", "Petrov", TRUE, @TestUserInfo);
+
+SET @TestUser = LAST_INSERT_ID();
 
 INSERT INTO ProjectType (Slug, Name) 
     VALUES ('waterfall', 'Waterfall (traditional) project');
@@ -271,3 +265,7 @@ INSERT INTO LogType (Slug, Name)
         ('usrprojunassign', 'User unassigned from the project'),
         ('usrprojroleupd', 'Updated user\'s role in the project');
 
+INSERT INTO Message(Content, AuthorId, TargetUserId)
+    VALUES
+      ('Message from admin', @SysAdmin, @TestUser),
+      ('Message to admin', @TestUser, @SysAdmin)

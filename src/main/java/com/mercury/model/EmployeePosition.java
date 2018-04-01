@@ -30,7 +30,7 @@ public class EmployeePosition implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "Id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "Id", nullable = false)
     public int getId() {
         return id;
     }
@@ -40,7 +40,7 @@ public class EmployeePosition implements Serializable {
     }
 
     @Basic
-    @Column(name = "Name", nullable = false, insertable = true, updatable = true, unique = true, length = 100)
+    @Column(name = "Name", nullable = false, unique = true, length = 100)
     public String getName() {
         return name;
     }
@@ -50,7 +50,7 @@ public class EmployeePosition implements Serializable {
     }
 
     @Basic
-    @Column(name = "Description", nullable = true, insertable = true, updatable = true)
+    @Column(name = "Description")
     @Type(type = "text")
     public String getDescription() {
         return description;
