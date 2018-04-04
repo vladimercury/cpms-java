@@ -23,6 +23,8 @@ public class User implements Serializable {
 
     private EmployeeInfo info;
     private Set<Message> receivedMessages = new HashSet<>(0);
+    private Set<ProjectStage> projectStagesAssigned = new HashSet<>(0);
+    private Set<UserToProject> userToProjects = new HashSet<>(0);
 
     @Id
     @GeneratedValue
@@ -96,7 +98,7 @@ public class User implements Serializable {
         isAdmin = admin;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "EmployeeInfoId")
     public EmployeeInfo getInfo() {
         return info;
@@ -106,7 +108,7 @@ public class User implements Serializable {
         this.info = info;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "target", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "target", cascade = CascadeType.ALL)
     public Set<Message> getReceivedMessages() {
         return receivedMessages;
     }
@@ -115,40 +117,26 @@ public class User implements Serializable {
         this.receivedMessages = receivedMessages;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        User that = (User) o;
-
-        if (id != that.id)
-            return false;
-        if (!StringUtils.equals(login, that.login))
-            return false;
-        if (!StringUtils.equals(password, that.password))
-            return false;
-        if (!StringUtils.equals(firstName, that.firstName))
-            return false;
-        if (!StringUtils.equals(lastName, that.lastName))
-            return false;
-        if (!StringUtils.equals(middleName, that.middleName))
-            return false;
-        return isAdmin == that.isAdmin;
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = ProjectStage.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "UserToProjectStage", joinColumns = {
+            @JoinColumn(name = "UserId", nullable = false, updatable = false)
+    }, inverseJoinColumns = {
+            @JoinColumn(name = "ProjectStageId", nullable = false, updatable = false)
+    })
+    public Set<ProjectStage> getProjectStagesAssigned() {
+        return projectStagesAssigned;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (login != null ? login.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
-
-        return 31 * result;
+    public void setProjectStagesAssigned(Set<ProjectStage> projectStagesAssigned) {
+        this.projectStagesAssigned = projectStagesAssigned;
     }
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    public Set<UserToProject> getUserToProjects() {
+        return userToProjects;
+    }
+
+    public void setUserToProjects(Set<UserToProject> userToProjects) {
+        this.userToProjects = userToProjects;
+    }
 }

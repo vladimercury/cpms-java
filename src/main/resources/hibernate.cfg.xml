@@ -21,14 +21,19 @@
         <property name="c3p0.max_statements">50</property>
         <!-- List of XML mapping files -->
 
-        <mapping class="com.mercury.model.EmployeePosition"/>
+        <mapping class="com.mercury.model.Deployment"/>
         <mapping class="com.mercury.model.EmployeeInfo"/>
-        <mapping class="com.mercury.model.User"/>
+        <mapping class="com.mercury.model.EmployeePosition"/>
+        <mapping class="com.mercury.model.LogType"/>
         <mapping class="com.mercury.model.Message"/>
-        <mapping class="com.mercury.model.ProjectType"/>
-        <mapping class="com.mercury.model.ProjectStageTemplate"/>
         <mapping class="com.mercury.model.Project"/>
+        <mapping class="com.mercury.model.ProjectLog"/>
+        <mapping class="com.mercury.model.ProjectRole"/>
         <mapping class="com.mercury.model.ProjectStage"/>
+        <mapping class="com.mercury.model.ProjectStageTemplate"/>
+        <mapping class="com.mercury.model.ProjectType"/>
+        <mapping class="com.mercury.model.User"/>
+        <mapping class="com.mercury.model.UserToProject"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -42,7 +42,7 @@ public class EmployeeInfo implements Serializable {
         this.description = description;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "EmployeePositionId")
     public EmployeePosition getPosition() {
         return position;

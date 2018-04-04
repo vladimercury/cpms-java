@@ -4,6 +4,8 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Project", schema = "", catalog = "dream_team_cpms")
@@ -15,6 +17,7 @@ public class Project implements Serializable {
     private int priority;
 
     private ProjectType projectType;
+    private Set<UserToProject> projectToUsers = new HashSet<>(0);
 
     @Id
     @GeneratedValue
@@ -77,5 +80,14 @@ public class Project implements Serializable {
 
     public void setProjectType(ProjectType projectType) {
         this.projectType = projectType;
+    }
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "project", cascade = CascadeType.ALL)
+    public Set<UserToProject> getProjectToUsers() {
+        return projectToUsers;
+    }
+
+    public void setProjectToUsers(Set<UserToProject> projectToUsers) {
+        this.projectToUsers = projectToUsers;
     }
 }

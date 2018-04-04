@@ -19,12 +19,11 @@ public class MessageDTO {
 
     }
 
-    public MessageDTO(int id, String content, String creationDate, boolean unread, UserDTO author) {
+    public MessageDTO(int id, String content, String creationDate, boolean unread) {
         this.id = id;
         this.content = content;
         this.creationDate = creationDate;
         this.unread = unread;
-        this.author = author;
     }
 
     public MessageDTO(Message entity) {

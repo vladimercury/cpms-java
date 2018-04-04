@@ -2,6 +2,7 @@ package com.mercury.dao;
 
 import com.mercury.exception.DataAccessException;
 import com.mercury.model.Message;
+import com.mercury.model.User;
 
 import java.util.List;
 

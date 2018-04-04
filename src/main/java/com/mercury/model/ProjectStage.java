@@ -3,6 +3,7 @@ package com.mercury.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 @Table(name = "ProjectStage", schema = "", catalog = "dream_team_cpms")
@@ -14,6 +15,7 @@ public class ProjectStage implements Serializable {
 
     private Project project;
     private ProjectStageTemplate template;
+    private Set<User> assignedUsers;
 
     @Id
     @GeneratedValue
@@ -56,7 +58,7 @@ public class ProjectStage implements Serializable {
         this.endDate = endDate;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ProjectId")
     public Project getProject() {
         return project;
@@ -74,5 +76,14 @@ public class ProjectStage implements Serializable {
 
     public void setTemplate(ProjectStageTemplate template) {
         this.template = template;
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = User.class, mappedBy = "projectStagesAssigned")
+    public Set<User> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(Set<User> assignedUsers) {
+        this.assignedUsers = assignedUsers;
     }
 }

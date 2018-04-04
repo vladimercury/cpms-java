@@ -7,6 +7,7 @@ import com.mercury.model.Message;
 import com.mercury.model.User;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 

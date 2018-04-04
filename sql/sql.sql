@@ -179,7 +179,7 @@ CREATE TABLE ProjectLog
     LogTypeId           INT NOT NULL,
     AuthorUserId        INT NOT NULL,
     TargetUserId        INT,
-    ProjectId           INT,
+    ProjectId           INT NOT NULL,
     ProjectStageId      INT,
     DeploymentId        INT,
 

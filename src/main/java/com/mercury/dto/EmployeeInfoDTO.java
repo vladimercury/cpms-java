@@ -13,20 +13,15 @@ public class EmployeeInfoDTO {
 
     }
 
-    public EmployeeInfoDTO(int id, String description, EmployeePositionDTO position) {
+    public EmployeeInfoDTO(int id, String description) {
         this.id = id;
         this.description = description;
-        this.position = position;
     }
 
     public EmployeeInfoDTO(EmployeeInfo entity) {
         if (entity != null) {
             this.id = entity.getId();
             this.description = entity.getDescription();
-            EmployeePosition position = entity.getPosition();
-            if (position != null && Hibernate.isInitialized(position)) {
-                this.position = new EmployeePositionDTO(position);
-            }
         }
     }
 

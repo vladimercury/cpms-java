@@ -26,16 +26,13 @@ public class UserDTO {
 
     }
 
-    public UserDTO(int id, String login, String firstName, String lastName, String middleName, boolean isAdmin,
-                   EmployeeInfoDTO info, List<MessageDTO> receivedMessages) {
+    public UserDTO(int id, String login, String firstName, String lastName, String middleName, boolean isAdmin) {
         this.id = id;
         this.login = login;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
         this.isAdmin = isAdmin;
-        this.info = info;
-        this.receivedMessages = receivedMessages;
     }
 
     public UserDTO(User user) {
@@ -46,17 +43,6 @@ public class UserDTO {
             this.lastName = user.getLastName();
             this.middleName = user.getMiddleName();
             this.isAdmin = user.isAdmin();
-            EmployeeInfo info = user.getInfo();
-            if (info != null && Hibernate.isInitialized(info)) {
-                this.info = new EmployeeInfoDTO(info);
-            }
-            Set<Message> receivedMessages = user.getReceivedMessages();
-            if (receivedMessages != null && Hibernate.isInitialized(receivedMessages)) {
-                this.receivedMessages = new ArrayList<>();
-                for (Message message : receivedMessages) {
-                    this.receivedMessages.add(new MessageDTO(message));
-                }
-            }
         }
     }
 
@@ -122,6 +108,13 @@ public class UserDTO {
 
     public void setReceivedMessages(List<MessageDTO> receivedMessages) {
         this.receivedMessages = receivedMessages;
+    }
+
+    public void setReceivedMessages(Set<Message> receivedMessages) {
+        this.receivedMessages = new ArrayList<>();
+        for (Message message : receivedMessages) {
+            this.receivedMessages.add(new MessageDTO(message));
+        }
     }
 
     public boolean isOwnUser() {

@@ -46,7 +46,7 @@ public class ProjectStageTemplate implements Serializable {
         this.description = description;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ProjectTypeId")
     public ProjectType getProjectType() {
         return projectType;

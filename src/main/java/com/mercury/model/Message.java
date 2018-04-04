@@ -72,7 +72,7 @@ public class Message implements Serializable {
         this.author = author;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "TargetUserId")
     public User getTarget() {
         return target;
