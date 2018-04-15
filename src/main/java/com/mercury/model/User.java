@@ -131,7 +131,7 @@ public class User implements Serializable {
         this.projectStagesAssigned = projectStagesAssigned;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    //@OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     public Set<UserToProject> getUserToProjects() {
         return userToProjects;
     }

@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
         version="3.0">
     <servlet>
+        <servlet-name>startup</servlet-name>
+        <servlet-class>com.mercury.service.StartupServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>hello</servlet-name>
         <servlet-class>com.mercury.service.HelloServlet</servlet-class>
     </servlet>
@@ -24,7 +28,15 @@
         <servlet-name>message</servlet-name>
         <servlet-class>com.mercury.service.MessageServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>projects</servlet-name>
+        <servlet-class>com.mercury.service.ProjectServlet</servlet-class>
+    </servlet>
 
+    <servlet-mapping>
+        <servlet-name>startup</servlet-name>
+        <url-pattern>/startup</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>hello</servlet-name>
         <url-pattern>/hello</url-pattern>
@@ -45,18 +57,31 @@
         <servlet-name>message</servlet-name>
         <url-pattern>/message</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>projects</servlet-name>
+        <url-pattern>/projects</url-pattern>
+    </servlet-mapping>
 
+    <filter>
+        <filter-name>authFilter</filter-name>
+        <filter-class>com.mercury.filter.AuthorizedFilter</filter-class>
+    </filter>
     <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>com.mercury.filter.EncodingFilter</filter-class>
     </filter>
 
     <filter-mapping>
+        <filter-name>authFilter</filter-name>
+        <url-pattern>/message</url-pattern>
+        <url-pattern>/projects</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <welcome-file-list>
-        <welcome-file>Test.jsp</welcome-file>
+        <welcome-file>startup</welcome-file>
     </welcome-file-list>
 </web-app>

@@ -32,4 +32,24 @@ public class MessageDaoImpl implements MessageDAO {
     public void create(Message entity) throws DataAccessException {
         HibernateUtil.doCreate(entity);
     }
+
+    @Override
+    public List<Message> getReceivedMessagesForUser(User user) throws DataAccessException {
+        List<Message> resultList = null;
+        try {
+            HibernateUtil.beginTransaction();
+            resultList = HibernateUtil.getSession()
+                    .createCriteria(Message.class)
+                    .add(Restrictions.eq("TargetUserId", user))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .list();
+            HibernateUtil.commit();
+        } catch (HibernateException e) {
+            HibernateUtil.rollback();
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            HibernateUtil.closeSession();
+        }
+        return resultList;
+    }
 }

@@ -110,13 +110,6 @@ public class UserDTO {
         this.receivedMessages = receivedMessages;
     }
 
-    public void setReceivedMessages(Set<Message> receivedMessages) {
-        this.receivedMessages = new ArrayList<>();
-        for (Message message : receivedMessages) {
-            this.receivedMessages.add(new MessageDTO(message));
-        }
-    }
-
     public boolean isOwnUser() {
         return ownUser;
     }

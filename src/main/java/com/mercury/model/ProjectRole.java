@@ -12,7 +12,7 @@ public class ProjectRole implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "Id", nullable = false, insertable = true, updatable = false)
+    @Column(name = "Id", nullable = false, updatable = false)
     public int getId() {
         return id;
     }
@@ -22,7 +22,7 @@ public class ProjectRole implements Serializable {
     }
 
     @Basic
-    @Column(name = "Login", nullable = false, unique = true, length = 64)
+    @Column(name = "Slug", nullable = false, unique = true, updatable = false, length = 64)
     public String getSlug() {
         return slug;
     }
@@ -32,7 +32,7 @@ public class ProjectRole implements Serializable {
     }
 
     @Basic
-    @Column(name = "Login", nullable = false, unique = true)
+    @Column(name = "Name", nullable = false, unique = true)
     public String getName() {
         return name;
     }

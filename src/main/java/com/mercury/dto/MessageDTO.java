@@ -31,10 +31,6 @@ public class MessageDTO {
         this.content = entity.getContent();
         this.creationDate = DateUtil.format(entity.getCreationDate());
         this.unread = entity.isUnread();
-        User author = entity.getAuthor();
-        if (author != null && Hibernate.isInitialized(author)) {
-            this.author = new UserDTO(author);
-        }
     }
 
     public int getId() {

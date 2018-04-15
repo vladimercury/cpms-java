@@ -24,14 +24,15 @@ public class EncodingFilter implements Filter {
         servletResponse.setCharacterEncoding(UTF8);
         servletResponse.setContentType("application/json");
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        SessionWrapper sessionWrapper = new SessionWrapper(httpServletRequest.getSession(false));
-        if (sessionWrapper.isValid()) {
-            Integer loggedUserId = sessionWrapper.getLoggedUserId();
-            if (loggedUserId != null) {
-                System.out.println(loggedUserId);
-            }
-        }
+//        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+//        SessionWrapper sessionWrapper = new SessionWrapper(httpServletRequest.getSession(false));
+//        if (sessionWrapper.isValid()) {
+//            Integer loggedUserId = sessionWrapper.getLoggedUserId();
+//            if (loggedUserId != null) {
+//                System.out.println(loggedUserId);
+//            }
+//        }
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

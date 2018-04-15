@@ -10,6 +10,7 @@ public class UserToProject implements Serializable {
     private Project project;
     private ProjectRole role;
 
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "UserId")
     public User getUser() {
@@ -20,6 +21,7 @@ public class UserToProject implements Serializable {
         this.user = user;
     }
 
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ProjectId")
     public Project getProject() {

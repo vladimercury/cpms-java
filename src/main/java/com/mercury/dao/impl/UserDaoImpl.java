@@ -7,8 +7,10 @@ import com.mercury.dao.util.PasswordHash;
 import com.mercury.exception.DataAccessException;
 import com.mercury.model.User;
 import com.mercury.model.expand.UserExpansion;
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import java.security.NoSuchAlgorithmException;
@@ -41,14 +43,20 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
-    public User getByLogin(String login) throws DataAccessException {
+    public User get(int userId) throws DataAccessException {
+        return getEntityWithRestrictions(Restrictions.eq("id", userId));
+    }
+
+    @Override
+    public User getEntityWithRestrictions(Criterion... criteria) throws DataAccessException {
         User user = null;
         try {
             HibernateUtil.beginTransaction();
-            user = (User) HibernateUtil.getSession()
-                    .createCriteria(User.class)
-                    .add(Restrictions.eq("login", login))
-                    .uniqueResult();
+            Criteria request = HibernateUtil.getSession().createCriteria(User.class);
+            for (Criterion criterion : criteria) {
+                request = request.add(criterion);
+            }
+            user = (User) request.uniqueResult();
             HibernateUtil.commit();
         } catch (HibernateException e) {
             LOG.error(e);
@@ -58,6 +66,11 @@ public class UserDaoImpl implements UserDAO {
             HibernateUtil.closeSession();
         }
         return user;
+    }
+
+    @Override
+    public User getByLogin(String login) throws DataAccessException {
+        return getEntityWithRestrictions(Restrictions.eq("login", login));
     }
 
     @Override

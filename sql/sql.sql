@@ -220,12 +220,12 @@ INSERT INTO User (Login, Password, FirstName, LastName, IsAdmin, EmployeeInfoId)
 SET @TestUser = LAST_INSERT_ID();
 
 INSERT INTO ProjectType (Slug, Name) 
-    VALUES ('waterfall', 'Waterfall (traditional) project');
+    VALUES ('waterfall', 'Waterfall');
 
 SET @WaterfallProjectType = LAST_INSERT_ID();
 
 INSERT INTO ProjectType (Slug, Name) 
-    VALUES ('scrum', 'Scrum project');
+    VALUES ('scrum', 'Scrum');
 
 SET @ScrumProjectType = LAST_INSERT_ID();
 
@@ -241,12 +241,17 @@ INSERT INTO ProjectRole (Slug, Name)
     VALUES
         ('customer', 'Customer'),
         ('manager', 'Project Manager'),
-        ('dev', 'Developer'),
         ('bedev', 'Back-end developer'),
         ('fedev', 'Front-end developer'),
         ('fsdev', 'Full-stack developer'),
         ('mdev', 'Mobile developer'),
         ('test', 'Tester');
+
+INSERT INTO ProjectRole (Slug, Name)
+    VALUES
+      ('dev', 'Developer');
+
+SET @DeveloperRole = LAST_INSERT_ID();
 
 INSERT INTO LogType (Slug, Name)
     VALUES 
@@ -268,4 +273,11 @@ INSERT INTO LogType (Slug, Name)
 INSERT INTO Message(Content, AuthorId, TargetUserId)
     VALUES
       ('Message from admin', @SysAdmin, @TestUser),
-      ('Message to admin', @TestUser, @SysAdmin)
+      ('Message to admin', @TestUser, @SysAdmin);
+
+INSERT INTO Project(Name, Description, Active, Priority, ProjectTypeId)
+    VALUES ('CPMS', 'Corporate Project Management System', TRUE, 1, @WaterfallProjectType);
+SET @CPMSProject = LAST_INSERT_ID();
+
+INSERT INTO UserToProject(UserId, ProjectId, RoleId)
+    VALUES (@TestUser, @CPMSProject, @DeveloperRole);

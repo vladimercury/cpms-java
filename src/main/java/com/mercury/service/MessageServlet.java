@@ -22,7 +22,6 @@ import java.util.Set;
 
 public class MessageServlet extends HttpServlet {
     private static UserDaoImpl userDao = new UserDaoImpl();
-    private static MessageDaoImpl messageDao = new MessageDaoImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,11 +30,15 @@ public class MessageServlet extends HttpServlet {
 
         if (id != null) {
             try {
-                User user = userDao.getAndExpand(id, UserExpansion.RECEIVED_MESSAGES);
-                UserDTO userDTO = new UserDTO(user);
-                userDTO.setReceivedMessages(user.getReceivedMessages());
+                User user = userDao.get(id);
+                List<MessageDTO> messageDTOList = new ArrayList<>();
+                for (Message message: user.getReceivedMessages()) {
+                    MessageDTO messageDTO = new MessageDTO(message);
+                    messageDTO.setAuthor(new UserDTO(message.getAuthor()));
+                    messageDTOList.add(messageDTO);
+                }
 
-                resp.getWriter().write(new Gson().toJson(userDTO.getReceivedMessages()));
+                resp.getWriter().write(new Gson().toJson(messageDTOList));
             } catch (DataAccessException e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
