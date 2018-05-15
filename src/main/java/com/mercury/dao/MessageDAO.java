@@ -7,5 +7,5 @@ import com.mercury.model.User;
 import java.util.List;
 
 public interface MessageDAO extends GenericDAO<Message, Integer> {
-    List<Message> getReceivedMessagesForUser(User user) throws DataAccessException;
+    List<Message> getReceivedMessages(int userId) throws DataAccessException;
 }

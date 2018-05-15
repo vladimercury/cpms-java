@@ -22,6 +22,9 @@ public class EmployeeInfoDTO {
         if (entity != null) {
             this.id = entity.getId();
             this.description = entity.getDescription();
+            if (Hibernate.isInitialized(entity.getPosition())) {
+                setPosition(entity.getPosition());
+            }
         }
     }
 
@@ -47,5 +50,13 @@ public class EmployeeInfoDTO {
 
     public void setPosition(EmployeePositionDTO position) {
         this.position = position;
+    }
+
+    public void setPosition(EmployeePosition position) {
+        if (position != null) {
+            this.position = new EmployeePositionDTO(position);
+        } else {
+            this.position = null;
+        }
     }
 }

@@ -13,4 +13,6 @@ public interface GenericDAO<Type, ID extends Serializable> {
     void delete(Type entity) throws DataAccessException;
 
     void create(Type entity) throws DataAccessException;
+
+    void createOrUpdate(Type entity) throws DataAccessException;
 }

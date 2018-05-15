@@ -1,53 +1,146 @@
 package com.mercury.service;
 
-import com.google.gson.Gson;
-import com.mercury.dao.impl.UserDaoImpl;
-import com.mercury.dto.MessageDTO;
+import com.mercury.dao.impl.ProjectDaoImpl;
 import com.mercury.dto.ProjectDTO;
-import com.mercury.dto.UserDTO;
+import com.mercury.dto.UserToProjectDTO;
+import com.mercury.dto.extra.CurrentUserToProjectDTO;
+import com.mercury.dto.extra.ProjectListDTO;
+import com.mercury.dto.extra.SingleProjectDTO;
+import com.mercury.exception.BadRequestException;
 import com.mercury.exception.DataAccessException;
-import com.mercury.model.Message;
+import com.mercury.exception.ForbiddenException;
+import com.mercury.exception.NotFoundException;
 import com.mercury.model.Project;
-import com.mercury.model.User;
+import com.mercury.model.ProjectRole;
+import com.mercury.model.ProjectType;
 import com.mercury.model.UserToProject;
-import com.mercury.util.Routes;
-import com.mercury.util.SessionWrapper;
-import org.apache.commons.lang3.StringUtils;
+import com.mercury.util.RequestWrapper;
+import com.mercury.util.ResponseWrapper;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-public class ProjectServlet extends HttpServlet {
-    private static UserDaoImpl userDao = new UserDaoImpl();
+public class ProjectServlet extends GenericServlet {
+    private static ProjectDaoImpl projectDao = new ProjectDaoImpl();
+
+    private List<ProjectDTO> getAllProjects() throws DataAccessException {
+        return projectDao.getAll().stream().map(ProjectDTO::new).collect(Collectors.toList());
+    }
+
+    private List<ProjectDTO> getOwnProjects(int userId) throws DataAccessException {
+        return projectDao.getProjectsForUser(userId).stream().map(ProjectDTO::new).collect(Collectors.toList());
+    }
+
+    private ProjectDTO getSingleProject(int projectId) throws NotFoundException, DataAccessException {
+        Project project = projectDao.getProjectWithMembers(projectId);
+        if (project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        ProjectDTO projectDTO = new ProjectDTO(project);
+        projectDTO.setProjectType(project.getProjectType());
+        List<UserToProjectDTO> members = new ArrayList<>();
+        for (UserToProject userToProject : project.getProjectToUsers()) {
+            UserToProjectDTO userToProjectDTO = new UserToProjectDTO();
+            userToProjectDTO.setUser(userToProject.getUser());
+            userToProjectDTO.setRole(userToProject.getRole());
+            members.add(userToProjectDTO);
+        }
+        projectDTO.setMembers(members);
+        return projectDTO;
+    }
+
+    private CurrentUserToProjectDTO getCurrentRole(int userId, int projectId) throws DataAccessException {
+        ProjectRole role = projectDao.getMemberRole(userId, projectId);
+        return new CurrentUserToProjectDTO(role);
+    }
+
+    private ProjectDTO createProject(RequestWrapper request) throws DataAccessException,
+            BadRequestException, NotFoundException {
+        String name = request.requireNotBlankParameterString("name");
+        String description = request.getParameterString("description");
+        Integer priority = request.getParameterInteger("priority");
+        Integer projectTypeId = request.requirePositiveParameterInteger("type");
+
+        ProjectType type = projectDao.getProjectType(projectTypeId);
+        if (type == null) {
+            throw new NotFoundException("Type " + projectTypeId + " not found");
+        }
+        Project project = new Project();
+        project.setName(name);
+        project.setDescription(description);
+        project.setPriority(priority);
+        project.setProjectType(projectDao.getProjectType(projectTypeId));
+        project.setActive(false);
+
+        projectDao.create(project);
+        return new ProjectDTO(project);
+    }
+
+    private ProjectDTO updateProject(RequestWrapper request) throws DataAccessException, BadRequestException,
+            NotFoundException {
+        Integer id = request.requirePositiveParameterInteger("id");
+        String name = request.getParameterTrimmedString("name");
+        String description = request.getParameterTrimmedString("description");
+        Boolean active = request.getParameterBoolean("active");
+        Integer priority = request.getParameterInteger("priority");
+
+        Project project = projectDao.getProjectWithMembers(id);
+        if (project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        if (name != null) {
+            project.setName(name);
+        }
+        if (description != null) {
+            project.setDescription(description);
+        }
+        if (active != null) {
+            project.setActive(active);
+        }
+        if (priority != null) {
+            project.setPriority(priority);
+        }
+        projectDao.update(project);
+        return new ProjectDTO(project);
+    }
+
+    private void deleteProject(RequestWrapper request) throws DataAccessException, BadRequestException,
+            NotFoundException {
+        Integer id = request.requirePositiveParameterInteger("id");
+
+        Project project = projectDao.getProjectWithMembers(id);
+        if (project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        projectDao.delete(project);
+    }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Integer id = new SessionWrapper(req.getSession()).getLoggedUserId();
-        User user = null;
-        try {
-            user = userDao.get(id);
-        } catch (DataAccessException e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
+    protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
+        Integer id = request.getCurrentUserId();
+        Integer projectId = request.getParameterInteger("id");
+        if (projectId == null) {
+            response.writeJson(new ProjectListDTO(getOwnProjects(id), getAllProjects()));
+        } else {
+            response.writeJson(new SingleProjectDTO(getSingleProject(projectId), getCurrentRole(id, projectId)));
         }
+    }
 
-        List<ProjectDTO> projectDTOList = new ArrayList<>();
-        for (UserToProject userToProject : user.getUserToProjects()) {
-            Project project = userToProject.getProject();
-            ProjectDTO projectDTO = new ProjectDTO(project);
-            projectDTOList.add(projectDTO);
+    @Override
+    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
         }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("my", projectDTOList);
-        data.put("all", new ArrayList<>());
-        resp.getWriter().write(new Gson().toJson(data));
+        if (request.isPutMethod()) {
+            response.writeJson(updateProject(request));
+        } else if (request.isDeleteMethod()) {
+            deleteProject(request);
+            response.setNoContentStatus();
+        } else {
+            response.writeJson(createProject(request));
+        }
     }
 }

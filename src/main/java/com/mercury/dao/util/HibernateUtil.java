@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 public class HibernateUtil {
@@ -122,6 +123,19 @@ public class HibernateUtil {
         try {
             beginTransaction();
             getSession().save(createEntity);
+            commit();
+        } catch (Exception e) {
+            rollback();
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            closeSession();
+        }
+    }
+
+    public static void doCreateOrUpdate(Object entity) throws DataAccessException {
+        try {
+            beginTransaction();
+            getSession().saveOrUpdate(entity);
             commit();
         } catch (Exception e) {
             rollback();

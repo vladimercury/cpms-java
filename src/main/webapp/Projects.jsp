@@ -23,8 +23,9 @@
             <!--<span class="badge badge-pill bg-light align-text-bottom">2</span>-->
         </a>
         <a class="nav-link" href="#">Explore</a>
-        <span class="nav-span ml-auto">
-            Ivan Ivanov
+        <span class="nav-span ml-auto"></span>
+        <span class="nav-span" v-if="user">
+
         </span>
         <a class="nav-link" href="#" @click="logout">Logout</a>
     </nav>
@@ -85,5 +86,5 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/vue.js"></script>
 <script src="js/app.js"></script>
-<script src="js/run.js"></script>
+<script src="js/projects.js"></script>
 </html>

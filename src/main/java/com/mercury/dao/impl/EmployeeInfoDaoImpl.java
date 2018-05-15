@@ -36,4 +36,9 @@ public class EmployeeInfoDaoImpl implements EmployeeInfoDAO {
     public void create(EmployeeInfo entity) throws DataAccessException {
         HibernateUtil.doCreate(entity);
     }
+
+    @Override
+    public void createOrUpdate(EmployeeInfo entity) throws DataAccessException {
+        HibernateUtil.doCreateOrUpdate(entity);
+    }
 }

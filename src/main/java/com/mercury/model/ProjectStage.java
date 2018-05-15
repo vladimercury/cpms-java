@@ -58,7 +58,7 @@ public class ProjectStage implements Serializable {
         this.endDate = endDate;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProjectId")
     public Project getProject() {
         return project;
@@ -68,7 +68,7 @@ public class ProjectStage implements Serializable {
         this.project = project;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TemplateId")
     public ProjectStageTemplate getTemplate() {
         return template;
@@ -78,7 +78,7 @@ public class ProjectStage implements Serializable {
         this.template = template;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = User.class, mappedBy = "projectStagesAssigned")
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class, mappedBy = "projectStagesAssigned")
     public Set<User> getAssignedUsers() {
         return assignedUsers;
     }

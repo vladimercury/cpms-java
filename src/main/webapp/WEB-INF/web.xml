@@ -32,6 +32,23 @@
         <servlet-name>projects</servlet-name>
         <servlet-class>com.mercury.service.ProjectServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>user</servlet-name>
+        <servlet-class>com.mercury.service.UserServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>position</servlet-name>
+        <servlet-class>com.mercury.service.PositionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>role</servlet-name>
+        <servlet-class>com.mercury.service.RoleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>member</servlet-name>
+        <servlet-class>com.mercury.service.MemberServlet</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>startup</servlet-name>
@@ -61,6 +78,26 @@
         <servlet-name>projects</servlet-name>
         <url-pattern>/projects</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>projects</servlet-name>
+        <url-pattern>/project</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>user</servlet-name>
+        <url-pattern>/user</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>position</servlet-name>
+        <url-pattern>/position</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>role</servlet-name>
+        <url-pattern>/role</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>member</servlet-name>
+        <url-pattern>/member</url-pattern>
+    </servlet-mapping>
 
     <filter>
         <filter-name>authFilter</filter-name>
@@ -75,6 +112,11 @@
         <filter-name>authFilter</filter-name>
         <url-pattern>/message</url-pattern>
         <url-pattern>/projects</url-pattern>
+        <url-pattern>/project</url-pattern>
+        <url-pattern>/user</url-pattern>
+        <url-pattern>/position</url-pattern>
+        <url-pattern>/role</url-pattern>
+        <url-pattern>/member</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>

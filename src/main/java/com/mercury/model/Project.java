@@ -14,10 +14,13 @@ public class Project implements Serializable {
     private String name;
     private String description;
     private boolean active;
-    private int priority;
+    private Integer priority;
 
     private ProjectType projectType;
     private Set<UserToProject> projectToUsers = new HashSet<>(0);
+    private Set<ProjectStage> projectStages = new HashSet<>(0);
+
+    private int projectTypeId;
 
     @Id
     @GeneratedValue
@@ -64,11 +67,11 @@ public class Project implements Serializable {
 
     @Basic
     @Column(name = "Priority")
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
@@ -82,12 +85,30 @@ public class Project implements Serializable {
         this.projectType = projectType;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
     public Set<UserToProject> getProjectToUsers() {
         return projectToUsers;
     }
 
     public void setProjectToUsers(Set<UserToProject> projectToUsers) {
         this.projectToUsers = projectToUsers;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
+    public Set<ProjectStage> getProjectStages() {
+        return projectStages;
+    }
+
+    public void setProjectStages(Set<ProjectStage> projectStages) {
+        this.projectStages = projectStages;
+    }
+
+    @Column(name = "ProjectTypeId", updatable = false, insertable = false)
+    public int getProjectTypeId() {
+        return projectTypeId;
+    }
+
+    public void setProjectTypeId(int projectTypeId) {
+        this.projectTypeId = projectTypeId;
     }
 }

@@ -10,8 +10,12 @@ public class UserToProject implements Serializable {
     private Project project;
     private ProjectRole role;
 
+    private int userId;
+    private int projectId;
+    private int roleId;
+
     @Id
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserId")
     public User getUser() {
         return user;
@@ -22,7 +26,7 @@ public class UserToProject implements Serializable {
     }
 
     @Id
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProjectId")
     public Project getProject() {
         return project;
@@ -32,7 +36,7 @@ public class UserToProject implements Serializable {
         this.project = project;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RoleId")
     public ProjectRole getRole() {
         return role;
@@ -40,5 +44,32 @@ public class UserToProject implements Serializable {
 
     public void setRole(ProjectRole role) {
         this.role = role;
+    }
+
+    @Column(name = "UserId", updatable = false, insertable = false)
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userForeignKey) {
+        this.userId = userForeignKey;
+    }
+
+    @Column(name = "ProjectId", updatable = false, insertable = false)
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectForeignKey) {
+        this.projectId = projectForeignKey;
+    }
+
+    @Column(name = "RoleId", updatable = false, insertable = false)
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 }

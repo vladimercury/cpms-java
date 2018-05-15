@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Set;
 
 @Entity
 @Table(name = "EmployeePosition", schema = "", catalog = "dream_team_cpms")
@@ -19,6 +20,8 @@ public class EmployeePosition implements Serializable {
     private int id;
     private String name;
     private String description;
+
+    private Set<EmployeeInfo> infos;
 
     public EmployeePosition() {
     }
@@ -60,32 +63,12 @@ public class EmployeePosition implements Serializable {
         this.description = description;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        EmployeePosition that = (EmployeePosition) o;
-
-        if (id != that.id)
-            return false;
-        if (!StringUtils.equals(name, that.name))
-            return false;
-        if (!StringUtils.equals(description, that.description))
-            return false;
-
-        return true;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "position", cascade = CascadeType.ALL)
+    public Set<EmployeeInfo> getInfos() {
+        return infos;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-
-        return result;
+    public void setInfos(Set<EmployeeInfo> infos) {
+        this.infos = infos;
     }
-
 }

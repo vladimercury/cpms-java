@@ -15,8 +15,13 @@ App.overlay = new Vue({
 
 App.navbar = new Vue({
     el: "#navbar",
-    data: {},
+    data: {
+        user: null
+    },
     methods: {
+        refresh: function() {
+
+        },
         logout: function() {
             $.post("logout")
                 .then(function() {
@@ -31,26 +36,5 @@ App.header = new Vue({
     data: {},
     methods: {
         
-    }
-});
-
-App.projects = new Vue({
-    el: "#projects",
-    data: {
-        my: [],
-        all: []
-    },
-    methods: {
-        refresh: function() {
-            App.overlay.show();
-            $.get("projects")
-                .then(function (data) {
-                    this.my = data.my;
-                    this.all = data.all;
-                })
-                .always(function() {
-                    App.overlay.hide();
-                })
-        }
     }
 });

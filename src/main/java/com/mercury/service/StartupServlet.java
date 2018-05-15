@@ -11,16 +11,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class StartupServlet extends HttpServlet {
-    private static UserDaoImpl userDao = new UserDaoImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         SessionWrapper sessionWrapper = new SessionWrapper(request.getSession(false));
 
+        String page = request.getParameter("page");
+
         if (sessionWrapper.isValid()) {
             if (sessionWrapper.getLoggedUserId() != null) {
-                request.getRequestDispatcher(Routes.PROJECTS_JSP).forward(request, response);
+                String route = Routes.PROJECTS_JSP;
+                if (page != null) {
+                    switch (page.toLowerCase()) {
+                        case "projects":
+                            route = Routes.PROJECTS_JSP;
+                            break;
+                    }
+                }
+                request.getRequestDispatcher(route).forward(request, response);
                 return;
             }
         }

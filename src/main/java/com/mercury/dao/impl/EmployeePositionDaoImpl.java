@@ -35,4 +35,9 @@ public class EmployeePositionDaoImpl implements EmployeePositionDAO {
     public void create(EmployeePosition entity) throws DataAccessException {
         HibernateUtil.doCreate(entity);
     }
+
+    @Override
+    public void createOrUpdate(EmployeePosition entity) throws DataAccessException {
+        HibernateUtil.doCreateOrUpdate(entity);
+    }
 }

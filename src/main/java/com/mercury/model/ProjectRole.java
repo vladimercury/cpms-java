@@ -6,6 +6,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "ProjectRole", schema = "", catalog = "dream_team_cpms")
 public class ProjectRole implements Serializable {
+    public static String MANAGER = "manager";
+
     private int id;
     private String slug;
     private String name;

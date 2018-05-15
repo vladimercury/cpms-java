@@ -5,6 +5,8 @@ import com.mercury.dao.UserDAO;
 import com.mercury.dao.util.HibernateUtil;
 import com.mercury.dao.util.PasswordHash;
 import com.mercury.exception.DataAccessException;
+import com.mercury.model.EmployeeInfo;
+import com.mercury.model.EmployeePosition;
 import com.mercury.model.User;
 import com.mercury.model.expand.UserExpansion;
 import org.hibernate.Criteria;
@@ -97,6 +99,53 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
+    public EmployeePosition getPosition(int positionId) throws DataAccessException {
+        return (EmployeePosition) HibernateUtil.doGetById(EmployeePosition.class, positionId);
+    }
+
+    @Override
+    public void create(User user, EmployeeInfo info) throws DataAccessException {
+        try {
+            HibernateUtil.beginTransaction();
+            HibernateUtil.getSession().save(info);
+            user.setInfo(info);
+            HibernateUtil.getSession().save(user);
+            HibernateUtil.commit();
+        } catch (HibernateException e) {
+            LOG.error(e);
+            HibernateUtil.rollback();
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            HibernateUtil.closeSession();
+        }
+    }
+
+    public User getWithInfo(int id) throws DataAccessException {
+        User user = null;
+        try {
+            HibernateUtil.beginTransaction();
+            user = (User) HibernateUtil.getSession()
+                    .createCriteria(User.class)
+                    .add(Restrictions.eq("id", id))
+                    .uniqueResult();
+            if (user != null) {
+                Hibernate.initialize(user.getInfo());
+            }
+            if (user.getInfo() != null) {
+                Hibernate.initialize(user.getInfo().getPosition());
+            }
+            HibernateUtil.commit();
+        } catch (HibernateException e) {
+            LOG.error(e);
+            HibernateUtil.rollback();
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            HibernateUtil.closeSession();
+        }
+        return user;
+    }
+
+    @Override
     public List<User> getAll() throws DataAccessException {
         return (List<User>) HibernateUtil.doGetAll(User.class);
     }
@@ -114,5 +163,10 @@ public class UserDaoImpl implements UserDAO {
     @Override
     public void create(User entity) throws DataAccessException {
         HibernateUtil.doCreate(entity);
+    }
+
+    @Override
+    public void createOrUpdate(User entity) throws DataAccessException {
+        HibernateUtil.doCreateOrUpdate(entity);
     }
 }

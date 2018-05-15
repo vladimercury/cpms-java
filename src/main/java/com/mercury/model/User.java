@@ -98,7 +98,7 @@ public class User implements Serializable {
         isAdmin = admin;
     }
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "EmployeeInfoId")
     public EmployeeInfo getInfo() {
         return info;
@@ -108,7 +108,7 @@ public class User implements Serializable {
         this.info = info;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "target", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "target", cascade = CascadeType.ALL)
     public Set<Message> getReceivedMessages() {
         return receivedMessages;
     }
@@ -117,7 +117,7 @@ public class User implements Serializable {
         this.receivedMessages = receivedMessages;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = ProjectStage.class, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProjectStage.class, cascade = CascadeType.ALL)
     @JoinTable(name = "UserToProjectStage", joinColumns = {
             @JoinColumn(name = "UserId", nullable = false, updatable = false)
     }, inverseJoinColumns = {
@@ -131,7 +131,7 @@ public class User implements Serializable {
         this.projectStagesAssigned = projectStagesAssigned;
     }
 
-    //@OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     public Set<UserToProject> getUserToProjects() {
         return userToProjects;
     }

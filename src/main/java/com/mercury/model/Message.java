@@ -1,8 +1,5 @@
 package com.mercury.model;
 
-
-import ch.qos.logback.core.util.StringCollectionUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -18,6 +15,9 @@ public class Message implements Serializable {
     private boolean unread;
     private User author;
     private User target;
+
+    private int authorForeignKey;
+    private int targetForeignKey;
 
     @Id
     @GeneratedValue
@@ -62,7 +62,7 @@ public class Message implements Serializable {
         this.unread = unread;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AuthorId")
     public User getAuthor() {
         return author;
@@ -72,7 +72,7 @@ public class Message implements Serializable {
         this.author = author;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TargetUserId")
     public User getTarget() {
         return target;
@@ -82,4 +82,21 @@ public class Message implements Serializable {
         this.target = target;
     }
 
+    @Column(name = "AuthorId", updatable = false, insertable = false)
+    public int getAuthorForeignKey() {
+        return authorForeignKey;
+    }
+
+    public void setAuthorForeignKey(int authorForeignKey) {
+        this.authorForeignKey = authorForeignKey;
+    }
+
+    @Column(name = "TargetUserId", updatable = false, insertable = false)
+    public int getTargetForeignKey() {
+        return targetForeignKey;
+    }
+
+    public void setTargetForeignKey(int targetForeignKey) {
+        this.targetForeignKey = targetForeignKey;
+    }
 }

@@ -6,6 +6,7 @@ import com.mercury.exception.DataAccessException;
 import com.mercury.model.Message;
 import com.mercury.model.User;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
@@ -34,15 +35,23 @@ public class MessageDaoImpl implements MessageDAO {
     }
 
     @Override
-    public List<Message> getReceivedMessagesForUser(User user) throws DataAccessException {
+    public void createOrUpdate(Message entity) throws DataAccessException {
+        HibernateUtil.doCreateOrUpdate(entity);
+    }
+
+    @Override
+    public List<Message> getReceivedMessages(int userId) throws DataAccessException {
         List<Message> resultList = null;
         try {
             HibernateUtil.beginTransaction();
             resultList = HibernateUtil.getSession()
                     .createCriteria(Message.class)
-                    .add(Restrictions.eq("TargetUserId", user))
+                    .add(Restrictions.eq("targetForeignKey", userId))
                     .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .list();
+            for (Message message: resultList) {
+                Hibernate.initialize(message.getAuthor());
+            }
             HibernateUtil.commit();
         } catch (HibernateException e) {
             HibernateUtil.rollback();

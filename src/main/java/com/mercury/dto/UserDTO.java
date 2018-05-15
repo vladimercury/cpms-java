@@ -1,5 +1,6 @@
 package com.mercury.dto;
 
+import com.mercury.dao.util.HibernateUtil;
 import com.mercury.model.EmployeeInfo;
 import com.mercury.model.Message;
 import com.mercury.model.User;
@@ -43,6 +44,9 @@ public class UserDTO {
             this.lastName = user.getLastName();
             this.middleName = user.getMiddleName();
             this.isAdmin = user.isAdmin();
+            if (Hibernate.isInitialized(user.getInfo())) {
+                setInfo(user.getInfo());
+            }
         }
     }
 
@@ -100,6 +104,14 @@ public class UserDTO {
 
     public void setInfo(EmployeeInfoDTO info) {
         this.info = info;
+    }
+
+    public void setInfo(EmployeeInfo info) {
+        if (info != null) {
+            this.info = new EmployeeInfoDTO(info);
+        } else {
+            this.info = null;
+        }
     }
 
     public List<MessageDTO> getReceivedMessages() {
