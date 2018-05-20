@@ -1,6 +1,7 @@
 package com.mercury.service;
 
 import com.mercury.dao.impl.ProjectDaoImpl;
+import com.mercury.dao.impl.ProjectLogDaoImpl;
 import com.mercury.dto.ProjectDTO;
 import com.mercury.dto.UserToProjectDTO;
 import com.mercury.dto.extra.CurrentUserToProjectDTO;
@@ -10,12 +11,10 @@ import com.mercury.exception.BadRequestException;
 import com.mercury.exception.DataAccessException;
 import com.mercury.exception.ForbiddenException;
 import com.mercury.exception.NotFoundException;
-import com.mercury.model.Project;
-import com.mercury.model.ProjectRole;
-import com.mercury.model.ProjectType;
-import com.mercury.model.UserToProject;
+import com.mercury.model.*;
 import com.mercury.util.RequestWrapper;
 import com.mercury.util.ResponseWrapper;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 
 public class ProjectServlet extends GenericServlet {
     private static ProjectDaoImpl projectDao = new ProjectDaoImpl();
+    private static ProjectLogDaoImpl logDao = new ProjectLogDaoImpl();
 
     private List<ProjectDTO> getAllProjects() throws DataAccessException {
         return projectDao.getAll().stream().map(ProjectDTO::new).collect(Collectors.toList());
@@ -76,11 +76,16 @@ public class ProjectServlet extends GenericServlet {
         project.setActive(false);
 
         projectDao.create(project);
+
+        logDao.log(LogType.PROJECT_CREATED, request.getCurrentUser(), project);
+
         return new ProjectDTO(project);
     }
 
     private ProjectDTO updateProject(RequestWrapper request) throws DataAccessException, BadRequestException,
             NotFoundException {
+        User user = request.getCurrentUser();
+
         Integer id = request.requirePositiveParameterInteger("id");
         String name = request.getParameterTrimmedString("name");
         String description = request.getParameterTrimmedString("description");
@@ -91,6 +96,11 @@ public class ProjectServlet extends GenericServlet {
         if (project == null) {
             throw new NotFoundException("Project not found");
         }
+
+        String oldName = project.getName();
+        String oldDescription = project.getDescription();
+        Boolean oldActive = project.isActive();
+        Integer oldPriority = project.getPriority();
         if (name != null) {
             project.setName(name);
         }
@@ -104,6 +114,33 @@ public class ProjectServlet extends GenericServlet {
             project.setPriority(priority);
         }
         projectDao.update(project);
+
+        if (!StringUtils.equals(oldName, name)) {
+            logDao.log(LogType.PROJECT_NAME_UPDATED, user, project, oldName, name);
+        }
+        if (!StringUtils.equals(oldDescription, description)) {
+            logDao.log(LogType.PROJECT_DESCR_UPDATED, user, project, oldDescription, description);
+        }
+        if (oldActive != active) {
+            String newValue = null;
+            if (active != null) {
+                newValue = active.toString();
+            }
+
+            logDao.log(LogType.PROJECT_ACTIVE_UPDATED, user, project, oldActive.toString(), newValue);
+        }
+        if (oldPriority != priority) {
+            String oldValue = null;
+            String newValue = null;
+            if (oldPriority != null) {
+                oldValue = oldPriority.toString();
+            }
+            if (priority != null) {
+                newValue = priority.toString();
+            }
+            logDao.log(LogType.PROJECT_PRIORITY_UPDATED, user, project, oldValue, newValue);
+        }
+
         return new ProjectDTO(project);
     }
 

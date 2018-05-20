@@ -3,7 +3,9 @@ package com.mercury.util;
 import com.mercury.exception.BadRequestException;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -14,12 +16,16 @@ public class DataUtils {
     private static DateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     private static DateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    private static String POST_METHOD = "post";
-    private static String PUT_METHOD = "put";
-    private static String DELETE_METHOD = "delete";
-
     public static String formatDate(Date date) {
         return STANDARD_DATE_FORMAT.format(date);
+    }
+
+    public static Timestamp parseDate(String date) throws BadRequestException{
+        try {
+            return (Timestamp) STANDARD_DATE_FORMAT.parse(date);
+        } catch (ParseException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
     }
 
     public static Integer parseInt(String string) throws BadRequestException {
@@ -50,14 +56,17 @@ public class DataUtils {
     }
 
     public static boolean isPostMethod(String method) {
+        String POST_METHOD = "post";
         return StringUtils.equalsIgnoreCase(method, POST_METHOD);
     }
 
     public static boolean isPutMethod(String method) {
+        String PUT_METHOD = "put";
         return StringUtils.equalsIgnoreCase(method, PUT_METHOD);
     }
 
     public static boolean isDeleteMethod(String method) {
+        String DELETE_METHOD = "delete";
         return StringUtils.equalsIgnoreCase(method, DELETE_METHOD);
     }
 }

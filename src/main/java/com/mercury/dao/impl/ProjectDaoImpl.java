@@ -91,6 +91,11 @@ public class ProjectDaoImpl implements ProjectDAO {
     }
 
     @Override
+    public boolean isMember(int userId, int projectId) throws DataAccessException {
+        return getMemberRole(userId, projectId) != null;
+    }
+
+    @Override
     public List<Project> getAll() throws DataAccessException {
         return (List<Project>) HibernateUtil.doGetAll(Project.class);
     }

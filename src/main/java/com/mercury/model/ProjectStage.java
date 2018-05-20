@@ -17,6 +17,8 @@ public class ProjectStage implements Serializable {
     private ProjectStageTemplate template;
     private Set<User> assignedUsers;
 
+    private int projectId;
+
     @Id
     @GeneratedValue
     @Column(name = "Id", nullable = false)
@@ -85,5 +87,15 @@ public class ProjectStage implements Serializable {
 
     public void setAssignedUsers(Set<User> assignedUsers) {
         this.assignedUsers = assignedUsers;
+    }
+
+    @Basic
+    @Column(name = "ProjectId", updatable = false, insertable = false)
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 }

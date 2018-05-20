@@ -48,6 +48,18 @@
         <servlet-name>member</servlet-name>
         <servlet-class>com.mercury.service.MemberServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>log</servlet-name>
+        <servlet-class>com.mercury.service.LogServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>template</servlet-name>
+        <servlet-class>com.mercury.service.TemplateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>stage</servlet-name>
+        <servlet-class>com.mercury.service.StageServlet</servlet-class>
+    </servlet>
 
 
     <servlet-mapping>
@@ -98,6 +110,19 @@
         <servlet-name>member</servlet-name>
         <url-pattern>/member</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>log</servlet-name>
+        <url-pattern>/log</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>template</servlet-name>
+        <url-pattern>/template</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>stage</servlet-name>
+        <url-pattern>/stage</url-pattern>
+    </servlet-mapping>
+
 
     <filter>
         <filter-name>authFilter</filter-name>
@@ -117,6 +142,9 @@
         <url-pattern>/position</url-pattern>
         <url-pattern>/role</url-pattern>
         <url-pattern>/member</url-pattern>
+        <url-pattern>/log</url-pattern>
+        <url-pattern>/template</url-pattern>
+        <url-pattern>/stage</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>

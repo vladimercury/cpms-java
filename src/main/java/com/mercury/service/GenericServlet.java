@@ -1,5 +1,6 @@
 package com.mercury.service;
 
+import com.mercury.LoggerWrapper;
 import com.mercury.exception.BadRequestException;
 import com.mercury.exception.DataAccessException;
 import com.mercury.exception.ForbiddenException;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class GenericServlet extends HttpServlet {
+    private static LoggerWrapper LOG = LoggerWrapper.getLogger(GenericServlet.class);
+
     protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
             BadRequestException, DataAccessException, ForbiddenException, NotFoundException{
         super.doGet(request.getInnerRequest(), response.getInnerResponse());
@@ -31,12 +34,16 @@ public class GenericServlet extends HttpServlet {
             handleGet(new RequestWrapper(req), response);
         } catch (BadRequestException e) {
             response.setBadRequestError(e);
+            LOG.error(e);
         } catch (DataAccessException e) {
             response.setInternalError(e);
+            LOG.error(e);
         } catch (ForbiddenException e) {
             response.setForbiddenError(e);
+            LOG.error(e);
         } catch (NotFoundException e) {
             response.setNotFoundError(e);
+            LOG.error(e);
         }
     }
 
@@ -47,12 +54,16 @@ public class GenericServlet extends HttpServlet {
             handlePost(new RequestWrapper(req), response);
         } catch (BadRequestException e) {
             response.setBadRequestError(e);
+            LOG.error(e);
         } catch (DataAccessException e) {
             response.setInternalError(e);
+            LOG.error(e);
         } catch (ForbiddenException e) {
             response.setForbiddenError(e);
+            LOG.error(e);
         } catch (NotFoundException e) {
             response.setNotFoundError(e);
+            LOG.error(e);
         }
     }
 }

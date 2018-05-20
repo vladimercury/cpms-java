@@ -20,6 +20,8 @@ public class ProjectLog {
     private ProjectStage projectStage;
     private Deployment deployment;
 
+    private Integer projectId;
+
     @Id
     @GeneratedValue
     @Column(name = "Id", nullable = false)
@@ -32,7 +34,7 @@ public class ProjectLog {
     }
 
     @Basic
-    @Column(name = "Date", nullable = false)
+    @Column(name = "Date", nullable = false, insertable = false)
     public Timestamp getDate() {
         return date;
     }
@@ -63,7 +65,7 @@ public class ProjectLog {
         this.newValue = newValue;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LogTypeId")
     public LogType getLogType() {
         return logType;
@@ -73,7 +75,7 @@ public class ProjectLog {
         this.logType = logType;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AuthorUserId")
     public User getAuthor() {
         return author;
@@ -83,7 +85,7 @@ public class ProjectLog {
         this.author = author;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TargetUserId")
     public User getTarget() {
         return target;
@@ -93,7 +95,7 @@ public class ProjectLog {
         this.target = target;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProjectId")
     public Project getProject() {
         return project;
@@ -103,7 +105,7 @@ public class ProjectLog {
         this.project = project;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProjectStageId")
     public ProjectStage getProjectStage() {
         return projectStage;
@@ -113,7 +115,7 @@ public class ProjectLog {
         this.projectStage = projectStage;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DeploymentId")
     public Deployment getDeployment() {
         return deployment;
@@ -121,5 +123,15 @@ public class ProjectLog {
 
     public void setDeployment(Deployment deployment) {
         this.deployment = deployment;
+    }
+
+    @Basic
+    @Column(name = "ProjectId", insertable = false, updatable = false)
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 }

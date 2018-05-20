@@ -5,6 +5,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "LogType", schema = "", catalog = "dream_team_cpms")
 public class LogType {
+    public static final String PROJECT_CREATED = "newproj";
+    public static final String PROJECT_NAME_UPDATED = "updprojname";
+    public static final String PROJECT_DESCR_UPDATED = "updprojdesc";
+    public static final String PROJECT_ACTIVE_UPDATED = "updprojactive";
+    public static final String PROJECT_PRIORITY_UPDATED = "updprojpriority";
+
     private int id;
     private String slug;
     private String name;

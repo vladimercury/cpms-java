@@ -130,9 +130,9 @@ public class UserDaoImpl implements UserDAO {
                     .uniqueResult();
             if (user != null) {
                 Hibernate.initialize(user.getInfo());
-            }
-            if (user.getInfo() != null) {
-                Hibernate.initialize(user.getInfo().getPosition());
+                if (user.getInfo() != null) {
+                    Hibernate.initialize(user.getInfo().getPosition());
+                }
             }
             HibernateUtil.commit();
         } catch (HibernateException e) {

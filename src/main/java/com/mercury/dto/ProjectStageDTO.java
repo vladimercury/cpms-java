@@ -4,6 +4,7 @@ import com.mercury.model.Project;
 import com.mercury.model.ProjectStage;
 import com.mercury.model.User;
 import com.mercury.util.DataUtils;
+import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,16 +20,22 @@ public class ProjectStageDTO {
     private ProjectDTO project;
     private List<UserDTO> users;
 
-    private ProjectStageDTO() {
+    public ProjectStageDTO() {
 
     }
 
-    private ProjectStageDTO(ProjectStage stage) {
+    public ProjectStageDTO(ProjectStage stage) {
         if (stage != null) {
             this.id = stage.getId();
             this.order = stage.getOrder();
             this.setStart(stage.getStartDate());
             this.setEnd(stage.getEndDate());
+            if (Hibernate.isInitialized(stage.getProject())) {
+                this.setProject(stage.getProject());
+            }
+            if (Hibernate.isInitialized(stage.getAssignedUsers())) {
+                this.setUsers(stage.getAssignedUsers());
+            }
         }
     }
 

@@ -65,9 +65,8 @@ public class HibernateUtil {
                     .uniqueResult();
             commit();
         } catch (HibernateException e) {
-            LOG.error(e);
             rollback();
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException(e.getMessage(), e);
         } finally {
             closeSession();
         }
@@ -85,7 +84,7 @@ public class HibernateUtil {
             HibernateUtil.commit();
         } catch (HibernateException e) {
             HibernateUtil.rollback();
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException(e.getMessage(), e);
         } finally {
             HibernateUtil.closeSession();
         }
