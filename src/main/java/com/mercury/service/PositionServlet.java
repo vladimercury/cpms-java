@@ -2,10 +2,7 @@ package com.mercury.service;
 
 import com.mercury.dao.impl.PositionDaoImpl;
 import com.mercury.dto.EmployeePositionDTO;
-import com.mercury.exception.BadRequestException;
-import com.mercury.exception.DataAccessException;
-import com.mercury.exception.ForbiddenException;
-import com.mercury.exception.NotFoundException;
+import com.mercury.exception.*;
 import com.mercury.model.EmployeePosition;
 import com.mercury.util.RequestWrapper;
 import com.mercury.util.ResponseWrapper;
@@ -17,6 +14,45 @@ import java.util.stream.Collectors;
 
 public class PositionServlet extends GenericServlet {
     private static PositionDaoImpl positionDao = new PositionDaoImpl();
+
+    @Override
+    protected void handleDelete(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
+
+        Integer id = request.requirePositiveParameterInteger("id");
+        EmployeePosition position = positionDao.getPosition(id);
+        if (position == null) {
+            throw new NotFoundException("Position " + id + " not found");
+        }
+        positionDao.delete(position);
+        response.setNoContentStatus();
+    }
+
+    @Override
+    protected void handlePut(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
+
+        Integer id = request.requirePositiveParameterInteger("id");
+        String name = request.getParameterTrimmedString("name");
+        String description = request.getParameterTrimmedString("description");
+
+        EmployeePosition position = positionDao.getPosition(id);
+        if (position == null) {
+            throw new NotFoundException("Position " + id + " not found");
+        }
+        if (name != null) {
+            position.setName(name);
+        }
+        if (description != null) {
+            position.setDescription(description);
+        }
+        positionDao.update(position);
+        response.writeJson(new EmployeePositionDTO(position));
+    }
 
     @Override
     protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
@@ -39,41 +75,15 @@ public class PositionServlet extends GenericServlet {
         if (!request.isUserAdmin()) {
             throw new ForbiddenException("Not an admin");
         }
-        if (request.isPutMethod()) {
-            Integer id = request.requirePositiveParameterInteger("id");
-            String name = request.getParameterTrimmedString("name");
-            String description = request.getParameterTrimmedString("description");
 
-            EmployeePosition position = positionDao.getPosition(id);
-            if (position == null) {
-                throw new NotFoundException("Position " + id + " not found");
-            }
-            if (name != null) {
-                position.setName(name);
-            }
-            if (description != null) {
-                position.setDescription(description);
-            }
-            positionDao.update(position);
-            response.writeJson(new EmployeePositionDTO(position));
-        } else if (request.isDeleteMethod()) {
-            Integer id = request.requirePositiveParameterInteger("id");
-            EmployeePosition position = positionDao.getPosition(id);
-            if (position == null) {
-                throw new NotFoundException("Position " + id + " not found");
-            }
-            positionDao.delete(position);
-            response.setNoContentStatus();
-        } else {
-            String name = request.requireNotBlankParameterString("name");
-            String description = request.getParameterTrimmedString("description");
+        String name = request.requireNotBlankParameterString("name");
+        String description = request.getParameterTrimmedString("description");
 
-            EmployeePosition position = new EmployeePosition();
-            position.setName(name);
-            position.setDescription(description);
+        EmployeePosition position = new EmployeePosition();
+        position.setName(name);
+        position.setDescription(description);
 
-            positionDao.create(position);
-            response.writeJson(new EmployeePositionDTO(position));
-        }
+        positionDao.create(position);
+        response.writeJson(new EmployeePositionDTO(position));
     }
 }

@@ -26,12 +26,14 @@ public class MessageServlet extends GenericServlet {
     private static UserDaoImpl userDao = new UserDaoImpl();
     private static MessageDaoImpl messageDao = new MessageDaoImpl();
 
-    private Message processPost(RequestWrapper request) throws IOException, DataAccessException,
-            BadRequestException, NotFoundException, ForbiddenException {
-        if (!request.isUserAuthorized()) {
-            throw new NotAuthorizedException();
-        }
+    @Override
+    protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
+        List<Message> messages = messageDao.getReceivedMessages(request.getCurrentUserId());
+        response.writeJson(messages.stream().map(MessageDTO::new).collect(Collectors.toList()));
+    }
 
+    @Override
+    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
         String content = request.requireNotEmptyParameterString("content");
         Integer targetId = request.requireParameterInteger("target");
 
@@ -48,17 +50,7 @@ public class MessageServlet extends GenericServlet {
         message.setTarget(target);
 
         messageDao.create(message);
-        return message;
-    }
 
-    @Override
-    protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
-        List<Message> messages = messageDao.getReceivedMessages(request.getCurrentUserId());
-        response.writeJson(messages.stream().map(MessageDTO::new).collect(Collectors.toList()));
-    }
-
-    @Override
-    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
-        response.writeJson(processPost(request));
+        response.writeJson(new MessageDTO(message));
     }
 }

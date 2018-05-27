@@ -17,6 +17,8 @@ public class Deployment implements Serializable {
 
     private ProjectStage projectStage;
 
+    private int projectStageId;
+
     @Id
     @GeneratedValue
     @Column(name = "Id", nullable = false)
@@ -80,7 +82,7 @@ public class Deployment implements Serializable {
         this.removed = removed;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProjectStageId")
     public ProjectStage getProjectStage() {
         return projectStage;
@@ -88,5 +90,15 @@ public class Deployment implements Serializable {
 
     public void setProjectStage(ProjectStage projectStage) {
         this.projectStage = projectStage;
+    }
+
+    @Basic
+    @Column(name = "ProjectStageId", updatable = false, insertable = false)
+    public int getProjectStageId() {
+        return projectStageId;
+    }
+
+    public void setProjectStageId(int projectStageId) {
+        this.projectStageId = projectStageId;
     }
 }

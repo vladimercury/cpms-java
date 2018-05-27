@@ -7,10 +7,7 @@ import com.mercury.dto.UserToProjectDTO;
 import com.mercury.dto.extra.CurrentUserToProjectDTO;
 import com.mercury.dto.extra.ProjectListDTO;
 import com.mercury.dto.extra.SingleProjectDTO;
-import com.mercury.exception.BadRequestException;
-import com.mercury.exception.DataAccessException;
-import com.mercury.exception.ForbiddenException;
-import com.mercury.exception.NotFoundException;
+import com.mercury.exception.*;
 import com.mercury.model.*;
 import com.mercury.util.RequestWrapper;
 import com.mercury.util.ResponseWrapper;
@@ -57,8 +54,12 @@ public class ProjectServlet extends GenericServlet {
         return new CurrentUserToProjectDTO(role);
     }
 
-    private ProjectDTO createProject(RequestWrapper request) throws DataAccessException,
-            BadRequestException, NotFoundException {
+    @Override
+    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
+
         String name = request.requireNotBlankParameterString("name");
         String description = request.getParameterString("description");
         Integer priority = request.getParameterInteger("priority");
@@ -79,11 +80,14 @@ public class ProjectServlet extends GenericServlet {
 
         logDao.log(LogType.PROJECT_CREATED, request.getCurrentUser(), project);
 
-        return new ProjectDTO(project);
+        response.writeJson(new ProjectDTO(project));
     }
 
-    private ProjectDTO updateProject(RequestWrapper request) throws DataAccessException, BadRequestException,
-            NotFoundException {
+    @Override
+    protected void handlePut(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
         User user = request.getCurrentUser();
 
         Integer id = request.requirePositiveParameterInteger("id");
@@ -141,11 +145,14 @@ public class ProjectServlet extends GenericServlet {
             logDao.log(LogType.PROJECT_PRIORITY_UPDATED, user, project, oldValue, newValue);
         }
 
-        return new ProjectDTO(project);
+        response.writeJson(new ProjectDTO(project));
     }
 
-    private void deleteProject(RequestWrapper request) throws DataAccessException, BadRequestException,
-            NotFoundException {
+    @Override
+    protected void handleDelete(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
         Integer id = request.requirePositiveParameterInteger("id");
 
         Project project = projectDao.getProjectWithMembers(id);
@@ -153,6 +160,7 @@ public class ProjectServlet extends GenericServlet {
             throw new NotFoundException("Project not found");
         }
         projectDao.delete(project);
+        response.setNoContentStatus();
     }
 
     @Override
@@ -163,21 +171,6 @@ public class ProjectServlet extends GenericServlet {
             response.writeJson(new ProjectListDTO(getOwnProjects(id), getAllProjects()));
         } else {
             response.writeJson(new SingleProjectDTO(getSingleProject(projectId), getCurrentRole(id, projectId)));
-        }
-    }
-
-    @Override
-    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
-        if (!request.isUserAdmin()) {
-            throw new ForbiddenException("Not an admin");
-        }
-        if (request.isPutMethod()) {
-            response.writeJson(updateProject(request));
-        } else if (request.isDeleteMethod()) {
-            deleteProject(request);
-            response.setNoContentStatus();
-        } else {
-            response.writeJson(createProject(request));
         }
     }
 }

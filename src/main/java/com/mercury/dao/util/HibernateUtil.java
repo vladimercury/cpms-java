@@ -2,13 +2,11 @@ package com.mercury.dao.util;
 
 import com.mercury.LoggerWrapper;
 import com.mercury.exception.DataAccessException;
-import com.mercury.model.EmployeePosition;
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 public class HibernateUtil {
@@ -83,6 +81,7 @@ public class HibernateUtil {
                     .list();
             HibernateUtil.commit();
         } catch (HibernateException e) {
+            LOG.error(e);
             HibernateUtil.rollback();
             throw new DataAccessException(e.getMessage(), e);
         } finally {
@@ -97,6 +96,7 @@ public class HibernateUtil {
             getSession().update(updateEntity);
             commit();
         } catch (HibernateException e) {
+            LOG.error(e);
             rollback();
             throw new DataAccessException(e.getMessage());
         } finally {
@@ -111,6 +111,7 @@ public class HibernateUtil {
             getSession().delete(deleteEntity);
             commit();
         } catch (Exception e) {
+            LOG.error(e);
             rollback();
             throw new DataAccessException(e.getMessage());
         } finally {
@@ -124,6 +125,7 @@ public class HibernateUtil {
             getSession().save(createEntity);
             commit();
         } catch (Exception e) {
+            LOG.error(e);
             rollback();
             throw new DataAccessException(e.getMessage());
         } finally {
@@ -137,6 +139,7 @@ public class HibernateUtil {
             getSession().saveOrUpdate(entity);
             commit();
         } catch (Exception e) {
+            LOG.error(e);
             rollback();
             throw new DataAccessException(e.getMessage());
         } finally {

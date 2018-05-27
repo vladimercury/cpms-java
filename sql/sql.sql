@@ -105,7 +105,8 @@ CREATE TABLE Project
 CREATE TABLE ProjectStage
 (
     Id                  INT NOT NULL AUTO_INCREMENT,
-    `Order`             INT NOT NULL,
+    Name                VARCHAR(255) NOT NULL,
+    Ordr                INT NOT NULL,
     StartDate           DATETIME DEFAULT current_timestamp,
     EndDate             DATETIME,
     ProjectId           INT NOT NULL,
@@ -122,7 +123,7 @@ CREATE TABLE Deployment
     Name                VARCHAR(255) NOT NULL,
     Version             VARCHAR(64),
     URL                 VARCHAR(255) NOT NULL,
-    Description         TEXT NOT NULL,
+    Description         TEXT,
     Removed             BOOLEAN NOT NULL DEFAULT FALSE,
     ProjectStageId      INT NOT NULL,
 
@@ -195,7 +196,10 @@ CREATE TABLE ProjectLog
 SET @dreamteam = '947:5b424061353236346632:67115f74e0c30d154a5cc9625d628679e8a6835a95e2701305a787c36f59e5b2b0a52c1c0d19e5a49ea5e7c33b816c8ec208d9a30fc9d33b7b602b24e8db53bc';
 
 INSERT INTO EmployeePosition (Name)
-    VALUES ('System administrator');
+    VALUES ('Junior Software Developer'),
+        ('Software Developer'),
+        ('Senior Software Developer'),
+        ('System administrator');
 
 SET @SysAdminPos = LAST_INSERT_ID();
 
@@ -265,6 +269,11 @@ INSERT INTO LogType (Slug, Name)
         ('updstagestart', 'Project stage start date updated'),
         ('updstageend', 'Project stage end date updated'),
         ('newdepl', 'Deployment created'),
+        ('upddeplname', 'Deployment name updated'),
+        ('upddeplurl', 'Deployment url updated'),
+        ('upddepldesc', 'Deployment description updated'),
+        ('upddeplversion', 'Deployment version updated'),
+        ('upddeplremoved', 'Deployment removed state updated'),
         ('deldepl', 'Deployment removed'),
         ('usrprojassign', 'User assigned to the project'),
         ('usrprojunassign', 'User unassigned from the project'),

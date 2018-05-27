@@ -3,6 +3,7 @@ package com.mercury.dao.impl;
 import com.mercury.dao.ProjectStageDAO;
 import com.mercury.dao.util.HibernateUtil;
 import com.mercury.exception.DataAccessException;
+import com.mercury.model.Project;
 import com.mercury.model.ProjectStage;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -13,6 +14,13 @@ import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class ProjectStageDaoImpl implements ProjectStageDAO {
+    private void fullInitialize(ProjectStage stage) {
+        Hibernate.initialize(stage.getProject());
+        Hibernate.initialize(stage.getTemplate());
+        Hibernate.initialize(stage.getAssignedUsers());
+        Hibernate.initialize(stage.getDeployments());
+    }
+
     @Override
     public ProjectStage get(int id) throws DataAccessException {
         ProjectStage stage;
@@ -20,9 +28,7 @@ public class ProjectStageDaoImpl implements ProjectStageDAO {
             HibernateUtil.beginTransaction();
             stage = (ProjectStage) HibernateUtil.getSession().createCriteria(ProjectStage.class)
                     .add(Restrictions.eq("id", id)).uniqueResult();
-            Hibernate.initialize(stage.getTemplate());
-            Hibernate.initialize(stage.getProject());
-            Hibernate.initialize(stage.getAssignedUsers());
+            fullInitialize(stage);
             HibernateUtil.commit();
         } catch (HibernateException e) {
             HibernateUtil.rollback();

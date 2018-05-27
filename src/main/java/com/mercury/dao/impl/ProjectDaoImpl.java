@@ -8,6 +8,7 @@ import com.mercury.model.Project;
 import com.mercury.model.ProjectRole;
 import com.mercury.model.ProjectType;
 import com.mercury.model.UserToProject;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
@@ -91,8 +92,19 @@ public class ProjectDaoImpl implements ProjectDAO {
     }
 
     @Override
+    public List<ProjectType> getAllTypes() throws DataAccessException {
+        return (List<ProjectType>) HibernateUtil.doGetAll(ProjectType.class);
+    }
+
+    @Override
     public boolean isMember(int userId, int projectId) throws DataAccessException {
         return getMemberRole(userId, projectId) != null;
+    }
+
+    @Override
+    public boolean isManager(int userId, int projectId) throws DataAccessException {
+        ProjectRole role = getMemberRole(userId, projectId);
+        return (role != null) && StringUtils.equals(role.getSlug(), ProjectRole.MANAGER);
     }
 
     @Override

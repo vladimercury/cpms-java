@@ -3,10 +3,7 @@ package com.mercury.service;
 import com.mercury.dao.impl.UserDaoImpl;
 import com.mercury.dao.util.PasswordHash;
 import com.mercury.dto.UserDTO;
-import com.mercury.exception.BadRequestException;
-import com.mercury.exception.DataAccessException;
-import com.mercury.exception.ForbiddenException;
-import com.mercury.exception.NotFoundException;
+import com.mercury.exception.*;
 import com.mercury.model.EmployeeInfo;
 import com.mercury.model.EmployeePosition;
 import com.mercury.model.User;
@@ -25,7 +22,7 @@ public class UserServlet extends GenericServlet {
 
     private UserDTO getUser(RequestWrapper request, Integer userId) throws DataAccessException,
             NotFoundException {
-        User user = null;
+        User user;
         if (userId == 0) {
             user = userDao.getWithInfo(request.getCurrentUserId());
         } else {
@@ -47,7 +44,23 @@ public class UserServlet extends GenericServlet {
         return result;
     }
 
-    private UserDTO createUser(RequestWrapper request) throws BadRequestException, DataAccessException {
+    @Override
+    protected void handleGet(RequestWrapper request, ResponseWrapper response) throws IOException,
+            BadRequestException, DataAccessException, NotFoundException {
+        Integer userId = request.getParameterNonNegativeInteger("id");
+        if (userId != null) {
+            response.writeJson(getUser(request, userId));
+        } else {
+            response.writeJson(getAllUsers());
+        }
+    }
+
+    @Override
+    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws BadRequestException, DataAccessException, IOException, ForbiddenException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
+
         User user = new User();
         EmployeeInfo info = new EmployeeInfo();
         String password = request.requireNotBlankParameterString("password");
@@ -68,10 +81,14 @@ public class UserServlet extends GenericServlet {
             info.setPosition(userDao.getPosition(positionId));
         }
         userDao.create(user, info);
-        return new UserDTO(user);
+        response.writeJson(new UserDTO(user));
     }
 
-    private UserDTO updateUser(RequestWrapper request) throws BadRequestException, DataAccessException, NotFoundException {
+    protected void handlePut(RequestWrapper request, ResponseWrapper response) throws BadRequestException, DataAccessException, NotFoundException, ForbiddenException, IOException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
+
         Integer userId = request.requirePositiveParameterInteger("id");
         User user = userDao.getWithInfo(userId);
         if (user == null) {
@@ -123,10 +140,15 @@ public class UserServlet extends GenericServlet {
             }
         }
         userDao.update(user);
-        return new UserDTO(user);
+        response.writeJson(new UserDTO(user));
     }
 
-    private void deleteUser(RequestWrapper request) throws BadRequestException, DataAccessException, NotFoundException {
+    @Override
+    protected void handleDelete(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        if (!request.isUserAdmin()) {
+            throw new ForbiddenException("Not an admin");
+        }
+
         Integer userId = request.requirePositiveParameterInteger("id");
         User user = userDao.getWithInfo(userId);
         if (user == null) {
@@ -134,32 +156,6 @@ public class UserServlet extends GenericServlet {
         }
 
         userDao.delete(user);
-    }
-
-    @Override
-    protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
-            BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
-        Integer userId = request.getParameterNonNegativeInteger("id");
-        if (userId != null) {
-            response.writeJson(getUser(request, userId));
-        } else {
-            response.writeJson(getAllUsers());
-        }
-    }
-
-    @Override
-    protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
-            BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
-        if (!request.isUserAdmin()) {
-            throw new ForbiddenException("Not an admin");
-        }
-        if (request.isPutMethod()) {
-            response.writeJson(updateUser(request));
-        } else if (request.isDeleteMethod()) {
-            deleteUser(request);
-            response.setNoContentStatus();
-        } else {
-            response.writeJson(createUser(request));
-        }
+        response.setNoContentStatus();
     }
 }

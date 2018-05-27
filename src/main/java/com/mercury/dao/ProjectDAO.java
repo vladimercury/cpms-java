@@ -16,5 +16,9 @@ public interface ProjectDAO extends GenericDAO<Project, Integer> {
 
     ProjectType getProjectType(int projectTypeId) throws DataAccessException;
 
+    List<ProjectType> getAllTypes() throws DataAccessException;
+
     boolean isMember(int userId, int projectId) throws DataAccessException;
+
+    boolean isManager(int userId, int projectId) throws DataAccessException;
 }

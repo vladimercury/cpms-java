@@ -13,6 +13,7 @@ import java.util.Set;
 
 public class ProjectStageDTO {
     private int id;
+    private String name;
     private int order;
     private String start;
     private String end;
@@ -27,6 +28,7 @@ public class ProjectStageDTO {
     public ProjectStageDTO(ProjectStage stage) {
         if (stage != null) {
             this.id = stage.getId();
+            this.name = stage.getName();
             this.order = stage.getOrder();
             this.setStart(stage.getStartDate());
             this.setEnd(stage.getEndDate());
@@ -121,5 +123,13 @@ public class ProjectStageDTO {
         } else {
             this.users = null;
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

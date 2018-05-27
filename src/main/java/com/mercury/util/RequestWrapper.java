@@ -134,6 +134,14 @@ public class RequestWrapper {
         return DataUtils.parseInt(data);
     }
 
+    public int requireNonNegativeParameterInteger(String parameter) throws BadRequestException {
+        int result = requireParameterInteger(parameter);
+        if (result < 0) {
+            throw new BadRequestException("Parameter " + parameter + " is not positive");
+        }
+        return result;
+    }
+
     public int requirePositiveParameterInteger(String parameter) throws BadRequestException {
         int result = requireParameterInteger(parameter);
         if (result <= 0) {

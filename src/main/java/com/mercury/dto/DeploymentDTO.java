@@ -1,6 +1,7 @@
 package com.mercury.dto;
 
 import com.mercury.model.Deployment;
+import org.hibernate.Hibernate;
 
 public class DeploymentDTO {
     private int id;
@@ -9,6 +10,8 @@ public class DeploymentDTO {
     private String url;
     private String description;
     private boolean removed;
+
+    private ProjectStageDTO stage;
 
     public DeploymentDTO() {
 
@@ -22,6 +25,9 @@ public class DeploymentDTO {
             this.url = deployment.getUrl();
             this.description = deployment.getDescription();
             this.removed = deployment.isRemoved();
+            if (Hibernate.isInitialized(deployment.getProjectStage()) && deployment.getProjectStage() != null) {
+                this.stage = new ProjectStageDTO(deployment.getProjectStage());
+            }
         }
     }
 
@@ -71,5 +77,13 @@ public class DeploymentDTO {
 
     public void setRemoved(boolean removed) {
         this.removed = removed;
+    }
+
+    public ProjectStageDTO getStage() {
+        return stage;
+    }
+
+    public void setStage(ProjectStageDTO stage) {
+        this.stage = stage;
     }
 }

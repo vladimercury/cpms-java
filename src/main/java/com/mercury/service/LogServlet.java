@@ -24,18 +24,20 @@ public class LogServlet extends GenericServlet{
     protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
         Integer projectId = request.getParameterPositiveInteger("project");
         Integer userId = request.getCurrentUserId();
-        List<ProjectLog> log = null;
+        List<ProjectLog> log;
 
         if (projectId != null) {
             if (!request.isUserAdmin() && !projectDao.isMember(userId, projectId)) {
-                throw new ForbiddenException("Not a project member");
+                throw new ForbiddenException("Not a project member or admin");
             }
             log = logDao.getForProject(projectId);
         } else {
+            if (!request.isUserAdmin()) {
+                throw new ForbiddenException("Not an admin");
+            }
             log = logDao.getAll();
         }
-        List<LogDTO> result = log.stream().map(LogDTO::new).collect(Collectors.toList());
-        response.writeJson(result);
+        response.writeJson(log.stream().map(LogDTO::new).collect(Collectors.toList()));
     }
 
     @Override

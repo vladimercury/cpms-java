@@ -7,7 +7,7 @@ App.projects = new Vue({
     methods: {
         refresh: function() {
             App.overlay.show();
-            $.get("projects")
+            $.get("project")
                 .then(function (data) {
                     this.my = data.my;
                     this.all = data.all;

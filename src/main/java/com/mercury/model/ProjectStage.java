@@ -9,6 +9,7 @@ import java.util.Set;
 @Table(name = "ProjectStage", schema = "", catalog = "dream_team_cpms")
 public class ProjectStage implements Serializable {
     private int id;
+    private String name;
     private int order;
     private Timestamp startDate;
     private Timestamp endDate;
@@ -16,6 +17,7 @@ public class ProjectStage implements Serializable {
     private Project project;
     private ProjectStageTemplate template;
     private Set<User> assignedUsers;
+    private Set<Deployment> deployments;
 
     private int projectId;
 
@@ -31,7 +33,7 @@ public class ProjectStage implements Serializable {
     }
 
     @Basic
-    @Column(name = "Order", nullable = false)
+    @Column(name = "Ordr", nullable = false)
     public int getOrder() {
         return order;
     }
@@ -97,5 +99,24 @@ public class ProjectStage implements Serializable {
 
     public void setProjectId(int projectId) {
         this.projectId = projectId;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "projectStage", cascade = CascadeType.ALL)
+    public Set<Deployment> getDeployments() {
+        return deployments;
+    }
+
+    public void setDeployments(Set<Deployment> deployments) {
+        this.deployments = deployments;
+    }
+
+    @Basic
+    @Column(name = "Name", nullable = false)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

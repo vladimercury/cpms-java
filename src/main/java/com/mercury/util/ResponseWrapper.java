@@ -2,6 +2,7 @@ package com.mercury.util;
 
 import com.google.gson.Gson;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,6 +41,10 @@ public class ResponseWrapper {
 
     public void setNotFoundError(Exception e) throws IOException {
         setError(HttpServletResponse.SC_NOT_FOUND, e);
+    }
+
+    public void setNotImplementedError(Exception e) throws IOException {
+        setError(HttpServletResponse.SC_NOT_IMPLEMENTED, e);
     }
 
     public void setInternalError(Exception e) throws IOException {

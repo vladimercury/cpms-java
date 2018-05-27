@@ -22,8 +22,7 @@ public class RoleServlet extends GenericServlet {
     protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException {
         Integer id =  request.getParameterPositiveInteger("id");
         if (id == null) {
-            List<ProjectRoleDTO> list = roleDao.getAll().stream().map(ProjectRoleDTO::new).collect(Collectors.toList());
-            response.writeJson(list);
+            response.writeJson(roleDao.getAll().stream().map(ProjectRoleDTO::new).collect(Collectors.toList()));
         } else {
             ProjectRole role = roleDao.get(id);
             if (role == null) {

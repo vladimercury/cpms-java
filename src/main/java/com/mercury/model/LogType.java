@@ -11,6 +11,16 @@ public class LogType {
     public static final String PROJECT_ACTIVE_UPDATED = "updprojactive";
     public static final String PROJECT_PRIORITY_UPDATED = "updprojpriority";
 
+    public static final String PROJECT_STAGE_CREATED = "newstage";
+
+    public static final String DEPLOYMENT_CREATED = "newdepl";
+    public static final String DEPLOYMENT_NAME_UPDATED = "upddeplname";
+    public static final String DEPLOYMENT_URL_UPDATED = "upddeplurl";
+    public static final String DEPLOYMENT_DESCR_UPDATED = "upddepldesc";
+    public static final String DEPLOYMENT_VERSION_UPDATED = "upddeplversion";
+    public static final String DEPLOYMENT_REMOVED_UPDATED = "upddeplremoved";
+    public static final String DEPLOYMENT_DELETED = "deldepl";
+
     private int id;
     private String slug;
     private String name;

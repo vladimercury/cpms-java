@@ -1,10 +1,7 @@
 package com.mercury.service;
 
 import com.mercury.LoggerWrapper;
-import com.mercury.exception.BadRequestException;
-import com.mercury.exception.DataAccessException;
-import com.mercury.exception.ForbiddenException;
-import com.mercury.exception.NotFoundException;
+import com.mercury.exception.*;
 import com.mercury.util.RequestWrapper;
 import com.mercury.util.ResponseWrapper;
 
@@ -18,13 +15,23 @@ public class GenericServlet extends HttpServlet {
     private static LoggerWrapper LOG = LoggerWrapper.getLogger(GenericServlet.class);
 
     protected void handleGet(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
-            BadRequestException, DataAccessException, ForbiddenException, NotFoundException{
-        super.doGet(request.getInnerRequest(), response.getInnerResponse());
+            BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException{
+        throw new NotImplementedException("GET not implemented");
     }
 
     protected void handlePost(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
-            BadRequestException, DataAccessException, ForbiddenException, NotFoundException{
-        super.doPost(request.getInnerRequest(), response.getInnerResponse());
+            BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException{
+        throw new NotImplementedException("POST not implemented");
+    }
+
+    protected void handlePut(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
+            BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        throw new NotImplementedException("PUT not implemented");
+    }
+
+    protected void handleDelete(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException,
+            BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
+        throw new NotImplementedException("DELETE not implemented");
     }
 
     @Override
@@ -44,14 +51,24 @@ public class GenericServlet extends HttpServlet {
         } catch (NotFoundException e) {
             response.setNotFoundError(e);
             LOG.error(e);
+        } catch (NotImplementedException e) {
+            response.setNotImplementedError(e);
+            LOG.error(e);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RequestWrapper request = new RequestWrapper(req);
         ResponseWrapper response = new ResponseWrapper(resp);
         try {
-            handlePost(new RequestWrapper(req), response);
+            if (request.isDeleteMethod()) {
+                handleDelete(request, response);
+            } else if (request.isPutMethod()) {
+                handlePut(request, response);
+            } else {
+                handlePost(new RequestWrapper(req), response);
+            }
         } catch (BadRequestException e) {
             response.setBadRequestError(e);
             LOG.error(e);
@@ -63,6 +80,9 @@ public class GenericServlet extends HttpServlet {
             LOG.error(e);
         } catch (NotFoundException e) {
             response.setNotFoundError(e);
+            LOG.error(e);
+        } catch (NotImplementedException e) {
+            response.setNotImplementedError(e);
             LOG.error(e);
         }
     }
