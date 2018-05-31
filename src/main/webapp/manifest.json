@@ -40,7 +40,8 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "dt.cpms.view.App",
-			"type": "XML"
+			"type": "XML",
+			"id": "app"
 		},
 		"dependencies": {
 			"minUI5Version": "1.30.0",
@@ -74,26 +75,77 @@
                 "viewType": "XML",
                 "viewPath": "dt.cpms.view",
                 "controlId": "app",
-                "controlAggregation": "pages",
+                "controlAggregation": "detailPages",
                 "async": true
             },
     		"routes": [
     		    {
     		        "pattern": "",
-    		        "name": "main",
-    		        "target": "main"
+    		        "name": "master",
+    		        "target": ["welcome", "master"]
+    		    },
+    		    {
+    		        "pattern": "messages",
+    		        "name": "messages",
+    		        "target": ["master", "messages"]
+    		    },
+    		    {
+    		        "pattern": "project/{id}",
+    		        "name": "project",
+    		        "target": ["master", "project"]
+    		    },
+    		    {
+    		        "pattern": "projects",
+    		        "name": "projects",
+    		        "target": ["master", "projects"]
+    		    },
+    		    {
+    		        "pattern": "stage",
+    		        "name": "stage",
+    		        "target": ["master", "stage"]
+    		    },
+    		    {
+    		        "pattern": "user/{id}",
+    		        "name": "user",
+    		        "target": ["master", "user"]
     		    }
     		],
     		"targets": {
-    		    "app": {
-    		        "viewName": "App",
-				    "viewId": "app",
-    		        "transition": "show"
+    		    "master": {
+    		        "viewName": "Master",
+					"viewLevel": 1,
+				    "viewId": "master",
+					"controlAggregation": "masterPages"
     		    },
-    		    "main": {
-    		        "viewName": "Main",
-				    "viewId": "main",
-    		        "transition": "show"
+    		    "messages": {
+    		        "viewName": "Messages",
+    		        "viewId": "messages",
+					"viewLevel": 2
+    		    },
+    		    "project": {
+    		        "viewName": "Project",
+    		        "viewId": "project",
+					"viewLevel": 3
+    		    },
+    		    "projects": {
+    		        "viewName": "Projects",
+    		        "viewId": "projects",
+					"viewLevel": 2
+    		    },
+    		    "stage": {
+    		        "viewName": "Stage",
+    		        "viewId": "stage",
+					"viewLevel": 4
+    		    },
+    		    "user": {
+    		        "viewName": "User",
+    		        "viewId": "user",
+					"viewLevel": 3
+    		    },
+    		    "welcome": {
+    		        "viewName": "Welcome",
+    		        "viewId": "welcome",
+					"viewLevel": 2
     		    }
     		}
         }

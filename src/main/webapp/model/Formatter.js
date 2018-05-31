@@ -2,6 +2,14 @@ sap.ui.define([
 ], function() {
     
     return {
+        allowProjectEdit: function(bIsManager, bIsAdmin) {
+            
+        },
+        
+        count: function(aArray) {
+            return aArray && aArray.length || 0;    
+        },
+        
         priorityName: function(sPriority) {
             var iPrior = Number(sPriority);
             if (iPrior <= 2) {

@@ -36,11 +36,16 @@ sap.ui.define([
 			    .doGet("user", {id: 0})
 			    .then(function(oUser) {
 			        oUserModel.setData(oUser);
+			        if (oUser.isAdmin) {
+			            sap.ui.getCore().applyTheme("sap_belize_plus");
+			        } else {
+			            sap.ui.getCore().applyTheme("sap_belize");
+			        }
 			    });
 			    
 			
 			this.getRouter().initialize();
-			this.getRouter().navTo("main", {});
+			this.getRouter().navTo("master", {});
 		}
 	});
 });
