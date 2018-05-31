@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
         version="3.0">
     <servlet>
+        <servlet-name>assignee</servlet-name>
+        <servlet-class>com.mercury.service.AssigneeServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>deployment</servlet-name>
         <servlet-class>com.mercury.service.DeploymentServlet</servlet-class>
     </servlet>
@@ -45,6 +49,10 @@
         <servlet-class>com.mercury.service.ProjectServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>resource</servlet-name>
+        <servlet-class>com.mercury.service.ResourceServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>role</servlet-name>
         <servlet-class>com.mercury.service.RoleServlet</servlet-class>
     </servlet>
@@ -69,6 +77,11 @@
         <servlet-class>com.mercury.service.UserServlet</servlet-class>
     </servlet>
 
+
+    <servlet-mapping>
+        <servlet-name>assignee</servlet-name>
+        <url-pattern>/assignee</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>deployment</servlet-name>
         <url-pattern>/deployment</url-pattern>
@@ -110,6 +123,10 @@
         <url-pattern>/project</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>resource</servlet-name>
+        <url-pattern>/resources/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>role</servlet-name>
         <url-pattern>/role</url-pattern>
     </servlet-mapping>
@@ -146,6 +163,7 @@
 
     <filter-mapping>
         <filter-name>authFilter</filter-name>
+        <url-pattern>/assignee</url-pattern>
         <url-pattern>/deployment</url-pattern>
         <url-pattern>/log</url-pattern>
         <url-pattern>/message</url-pattern>

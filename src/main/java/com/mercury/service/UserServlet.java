@@ -142,20 +142,4 @@ public class UserServlet extends GenericServlet {
         userDao.update(user);
         response.writeJson(new UserDTO(user));
     }
-
-    @Override
-    protected void handleDelete(RequestWrapper request, ResponseWrapper response) throws ServletException, IOException, BadRequestException, DataAccessException, ForbiddenException, NotFoundException, NotImplementedException {
-        if (!request.isUserAdmin()) {
-            throw new ForbiddenException("Not an admin");
-        }
-
-        Integer userId = request.requirePositiveParameterInteger("id");
-        User user = userDao.getWithInfo(userId);
-        if (user == null) {
-            throw new NotFoundException("User not found");
-        }
-
-        userDao.delete(user);
-        response.setNoContentStatus();
-    }
 }

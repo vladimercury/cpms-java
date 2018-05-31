@@ -9,4 +9,6 @@ public class Routes {
     public static String DASHBOARD_JSP = "/Dash.jsp";
     public static String LOGIN_JSP = "/Login.jsp";
     public static String PROJECTS_JSP = "/Projects.jsp";
+
+    public static String INDEX_HTML = "/index.html";
 }

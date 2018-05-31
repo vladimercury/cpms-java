@@ -21,7 +21,7 @@ public class StartupServlet extends HttpServlet {
 
         if (sessionWrapper.isValid()) {
             if (sessionWrapper.getLoggedUserId() != null) {
-                String route = Routes.PROJECTS_JSP;
+                String route = Routes.INDEX_HTML;
                 if (page != null) {
                     switch (page.toLowerCase()) {
                         case "projects":
@@ -33,7 +33,7 @@ public class StartupServlet extends HttpServlet {
                 return;
             }
         }
-
+        //request.getRequestDispatcher(Routes.INDEX_HTML).forward(request, response);
         response.sendRedirect(Routes.LOGIN_SERVLET);
     }
 }

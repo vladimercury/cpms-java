@@ -11,6 +11,9 @@ public class LogType {
     public static final String PROJECT_ACTIVE_UPDATED = "updprojactive";
     public static final String PROJECT_PRIORITY_UPDATED = "updprojpriority";
 
+    public static final String MEMBER_ASSIGNED = "usrprojassign";
+    public static final String MEMBER_ROLE_UPDATED = "usrprojroleupd";
+
     public static final String PROJECT_STAGE_CREATED = "newstage";
 
     public static final String DEPLOYMENT_CREATED = "newdepl";

@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+	<ScrollContainer class="sapUiContentPadding"
+	                id="messages"
+					 horizontal="false"
+					 vertical="true"
+					 height="100%">
+		<List id="notificationList" class="" items="{data>/Messages}">
+		    <items>
+    			<NotificationListItem title="" description="{data>content}" showCloseButton="true"
+    					datetime="{data>creationDate}" unread="{data>unread}" priority="None"
+    					authorName="{data>author/firstName} {data>author/lastName}" authorPicture="sap-icon://paper-plane"/>
+			</items>
+		</List>
+	</ScrollContainer>
+</core:FragmentDefinition>

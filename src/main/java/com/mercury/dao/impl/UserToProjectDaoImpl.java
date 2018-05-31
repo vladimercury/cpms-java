@@ -16,6 +16,12 @@ import java.util.List;
 public class UserToProjectDaoImpl implements UserToProjectDAO {
     private static final LoggerWrapper LOG = LoggerWrapper.getLogger(UserToProjectDaoImpl.class);
 
+    private void fullInitialize(UserToProject userToProject) {
+        Hibernate.initialize(userToProject.getUser());
+        Hibernate.initialize(userToProject.getProject());
+        Hibernate.initialize(userToProject.getRole());
+    }
+
     @Override
     public List<UserToProject> getAll() throws DataAccessException {
         return (List<UserToProject>) HibernateUtil.doGetAll(UserToProject.class);
@@ -57,11 +63,7 @@ public class UserToProjectDaoImpl implements UserToProjectDAO {
                 criteria.add(Restrictions.eq("roleId", roleId));
             }
             list = (List<UserToProject>) criteria.list();
-            for (UserToProject userToProject : list) {
-                Hibernate.initialize(userToProject.getUser());
-                Hibernate.initialize(userToProject.getProject());
-                Hibernate.initialize(userToProject.getRole());
-            }
+            list.forEach(this::fullInitialize);
             HibernateUtil.commit();
         } catch (HibernateException e) {
             LOG.error(e);
@@ -71,5 +73,25 @@ public class UserToProjectDaoImpl implements UserToProjectDAO {
             HibernateUtil.closeSession();
         }
         return list;
+    }
+
+    @Override
+    public UserToProject get(Integer userId, Integer projectId) throws DataAccessException {
+        UserToProject userToProject;
+        try {
+            HibernateUtil.beginTransaction();
+            userToProject = (UserToProject) HibernateUtil.getSession().createCriteria(UserToProject.class)
+                    .add(Restrictions.eq("userId", userId))
+                    .add(Restrictions.eq("projectId", projectId)).list();
+            fullInitialize(userToProject);
+            HibernateUtil.commit();
+        } catch (HibernateException e) {
+            LOG.error(e);
+            HibernateUtil.rollback();
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            HibernateUtil.closeSession();
+        }
+        return userToProject;
     }
 }
